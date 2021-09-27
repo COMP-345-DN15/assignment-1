@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include "MapLoader.h"
 
 using namespace std;
 
@@ -15,7 +14,6 @@ class GameEngine {
 // private members of the GameEngine class
 private:
 
-	MapLoader* mapLoader;
 
 	GameEngineState currentState;
 	void loadMap(std::string mapName);
