@@ -3,7 +3,6 @@
 // Final names of other .h files TBD
 // #include "Player.h"
 // #include "Cards.h"
-// #include "MapLoader.h"
 
 // Game engine class
 
@@ -14,14 +13,12 @@ GameEngine::GameEngine()
 
     currentState = start;
 
-    mapLoader = new MapLoader();
 }
 
 GameEngine::~GameEngine()
 {
     //destructor
 
-    delete mapLoader;
 }
 
 void GameEngine::sendCommand(GameEngineCommand command)
