@@ -2,7 +2,6 @@
 #include <iostream>
 #include <vector>
 #include "Cards.h"
-#include "Territory.h"
 #include "Orders.h"
 
 using namespace std;
