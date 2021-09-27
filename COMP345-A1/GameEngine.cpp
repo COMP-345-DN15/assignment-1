@@ -13,15 +13,13 @@ GameEngine::GameEngine()
     //constructor
 
     currentState = start;
-
-    mapLoader = new MapLoader();
 }
 
 GameEngine::~GameEngine()
 {
     //destructor
 
-    delete mapLoader;
+ 
 }
 
 void GameEngine::sendCommand(GameEngineCommand command)
@@ -56,7 +54,7 @@ void GameEngine::sendCommand(GameEngineCommand command)
 
 void GameEngine::loadMap(std::string mapName) {
     //does nothing for now
-    Map* loadedMap = mapLoader->loadMap(mapName);
+    //Map* loadedMap = mapLoader->loadMap(mapName);
 
     //maybe add the map to my map array?
     //set the current map to this?
