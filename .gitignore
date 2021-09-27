@@ -3,3 +3,15 @@
 ################################################################################
 
 *.pdb
+*.exe
+*.opendb
+*.ipch
+*.tlog
+*.idb
+*.obj
+*.suo
+*.log
+*.recipe
+*.user
+/.vs/VSWorkspaceState.json
+/.vs/slnx.sqlite
