@@ -1,32 +1,17 @@
-# Prerequisites
-*.d
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
+*.pdb
 *.exe
-*.out
-*.app
+*.opendb
+*.ipch
+*.tlog
+*.idb
+*.obj
+*.suo
+*.log
+*.recipe
+*.user
+/.vs/VSWorkspaceState.json
+/.vs/slnx.sqlite
