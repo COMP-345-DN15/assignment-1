@@ -3,6 +3,7 @@
 #include <vector>
 #include "Cards.h"
 #include "Orders.h"
+#include "Map.h"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ private:
 	vector<Cards*> listOfCards;
 
 	// vector that contains a list of Orders objects
-	vector<Orders*> listOfOrders;
+	vector<Order*> listOfOrders;
 
 	//void issueOrder();
 
