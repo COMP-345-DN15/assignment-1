@@ -32,13 +32,18 @@ GameEngineCommand getCommandFromUser()
 		return winGame;
 	else if (userInput.compare("endGame") == 0)
 		return endGame;
+	else if (userInput.compare("playGame") == 0)
+		return playGame;
 
 	return invalidCommand;
 }
 
 void testGameEngine()
 {
-	std::cout << "Testing game engine" << std::endl;
+	cout << "===================" << endl;
+	cout << "Welcome to Warzone" << endl;
+	cout << "===================\n" << endl;
+	cout << "Testing game engine\n" << endl;
 
 	GameEngine* gameEngine = new GameEngine();
 
@@ -50,7 +55,7 @@ void testGameEngine()
 
 		//send the user's command to the engine
 		gameEngine->sendCommand(latestUserCommand);
-
-		break;
 	}
 }
+
+
