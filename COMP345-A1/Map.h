@@ -5,6 +5,7 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <optional>
 
 using namespace std;
 
@@ -55,7 +56,13 @@ public:
 	Map(Map* map);
 	~Map();									// Destructor
 
+	// addNode();
+
 	bool validate();						// returns whether a map is valid or invalid
+
+	int breadthFirstSearch(Continent* continentToCheck = 0);
+	
+	// void displayAdjacentNodes(Territory territory);
 
 	// not working:
 	// Map& operater = (const Map& map);
