@@ -338,7 +338,7 @@ Negotiate& Negotiate::operator=(const Negotiate& negotiateToAssign) {
 //consructors
 //default
 OrdersList::OrdersList() {
-	orders;
+	list<Order*> orders;
 
 }
 

@@ -181,7 +181,5 @@ public:
 	//stream stuff
 	friend ostream& operator<<(ostream& out, const OrdersList& ordersListToStream);
 	OrdersList& operator=(OrdersList& ordersListToAssign);
-
-private:
 	list<Order*> orders;
 };
