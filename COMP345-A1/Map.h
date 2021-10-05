@@ -5,6 +5,7 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <map>
 #include <optional>
 
 using namespace std;
@@ -23,7 +24,8 @@ struct Edge { 			// Edges between nodes represent adjacency between territories
 struct Territory {		// The graph’s nodes represents a territory (implemented as a Territory class)
 	Edge* head;
 	int continentID;
-	int territoryID;	// should this be territoryName?
+	string territoryName;
+	int territoryID;
 	int* armyCount;
 };
 
@@ -94,11 +96,15 @@ public:
 	int tempVar;
 	int origin;
 
+	std::map<int, map<string, char> > continentsMap;
+	std::map<int, map<string, int> > countriesMap;
+
 private:
 	void readContinents();
 	void readTerritories();
 	void readBorder();
 	void buildMap();
+	void readFile(string fileName);
 
 	// unsure of these below:
 	int players;

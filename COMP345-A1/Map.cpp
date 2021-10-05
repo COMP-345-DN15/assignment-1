@@ -279,7 +279,7 @@ MapLoader::MapLoader(string fileName)
 
     // determine number of players from file
 
-    inputFile.close();                  // close file stream
+    // inputFile.close();                  // close file stream
 
 };
 
@@ -322,3 +322,99 @@ void MapLoader::buildMap()
 {
 
 };
+
+void MapLoader::readFile(string fileName)
+{
+    inputFile.open(fileName); 
+    // inputFile.open(".\\Maps\\" + userIn);        // Open stream file
+    if (inputFile.is_open())
+    {
+        int data, armies, countryNumber, continentNumber, continentCount = 0, countryCount = 0;
+        string line, continentName, countryName;
+        while(inputFile >> data)
+        {
+            // read line
+            getline(inputFile, line);
+            // check if first character is ';' -> if so, skip line
+            if(line[0] == ';') {
+                // should skip this whole line
+                inputFile.ignore(1, '\n');
+
+            // check if first character is '[' - > if so, indicates a new section
+            } else if(line[0] == '[') {
+
+                // check if second character is 'f' -> if so, ignore line
+                if(line[1] == 'f') {
+                    // should skip this whole line
+                    inputFile.ignore(1, '\n');
+
+                // else -> marks the start of important section
+                } else {
+                    // check if fourth character is 'n' -> if so, indicates beginning of Continents section
+                    if(line[3] == 'n') {
+                        // go to next line
+                        inputFile.ignore(1, '\n');
+                        // begin looping to read continents
+                        while(line[0] != ' ') {
+                            // loop line looking for space
+                            for(int i = 0; i < line.length(); i++) {
+                                if(line[i] == ' ') {
+                                    // assign name of continent
+                                    continentName = line.substr(0, i-1);
+                                    // assign army count
+                                    armies = line[i+1];
+                                    break;
+                                }
+                            }
+
+                            cout << "continent obtained! name = " << continentName << " and army count = " << armies;
+
+                            // add continent info to map
+                            // should we just call constructor on it and add the object instead?
+                            continentCount++;
+                            continentsMap.insert(make_pair(continentCount, map<string, int>()));
+                            continentsMap[continentCount].insert(make_pair(continentName, armies));
+                            inputFile.ignore(1, '\n');
+
+                            // read new line
+                            getline(inputFile, line);
+                        }
+                    // else -> indicates beginning of Countries section
+                    } else {
+                        // go to next line
+                        inputFile.ignore(1, '\n');
+                        // begin looping to read countries
+                        while(line[0] != ' ') {
+                            // get countryID
+                            countryNumber = line[0];
+
+                            // loop line looking for space
+                            for(int i = 2; i < line.length(); i++) {
+                                if(line[i] == ' ') {
+                                    // assign name of country
+                                    countryName = line.substr(2, i-1);
+                                    // assign army count
+                                    continentNumber = line[i+1];
+                                    break;
+                                }
+                            }
+
+                            cout << "country obtained! name = " << countryName << " and it belongs to continent " << continentNumber;
+
+                            // add continent to map
+                            // should we just call constructor on it and add the object instead?
+                            countryCount++;
+                            countriesMap.insert(make_pair(countryCount, map<string, int>()));
+                            countriesMap[countryCount].insert(make_pair(countryName, continentNumber));
+                            inputFile.ignore(1, '\n');
+
+                            // read new line
+                            getline(inputFile, line);
+                        }
+                    }
+                }
+            }
+        }
+        inputFile.close();
+    }
+}
