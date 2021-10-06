@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Map.h"
-
+#include "Cards.h"
+#include "Orders.h"
 
 #include <iostream>
 #include <ostream>
@@ -14,23 +15,51 @@ Player::Player()
 {
 	name = "";
 	hand = new Hand();
-	army = 0;
+
 }
 
 
-//Parametric construtor set only name
+Player() = default;
+Player(std::vector<Country> countries, Hand hand, DiceFacility dice, int playerNumber, Strategy * strategy);
+
+//Parametric construtor 
 Player::Player(string pname)
 {
-	name = pname;
-	hand = new Hand();
-	army = 0;
+	playerName = pname;
+	listOfCards = new Hand();
 }
 
+Player::Player(std::vector<Map::Territory*>* TerritoriesOwned, Hand* Cards, vector<Map::Territory*> TerritoriesToDefend, const string name) {
+	listOfTerritoriesOwned = OfTerritoriesOwned;
+	listOfCards = Cards;
+	listOfTerritoriesToDefend = TerritoriesToDefend;
+	playerName = name;
+}
+
+
+// Player destructor
 Player::~Player()
 {
-    delete hand;
-    hand = nullptr;
+	delete listOfCards;
+	listOfCards = nullptr;
 }
+Player::~Player()
+{
+	delete listOfCards;
+	listOfCards = nullptr;
+	delete listOfTerritoriesOwned;
+	listOfTerritoriesOwned = nullptr;
+	delete listOfTerritoriesToDefend;
+	listOfTerritoriesToDefend = nullptr;
+	delete listOfTerritoriesToAttack;
+	listOfTerritoriesToAttack = nullptr;
+	delete playerName;
+	playerName = nullptr;
+	delete listOfOrders;
+	listOfOrders = nullptr;
+}
+
+
 //ToAttack() method return a list of territories
 vector<Territory*> Player::toAttack() {
 	// for now only arbitary territory list returned
@@ -54,35 +83,9 @@ vector<Territory*> Player::toDefend() {
 //IssueOrder() will creat a order obj and add it to player's order list
 void Player::issueOrder()
 {	//every time make a new order obj there will be a printout to show it works
-//	Order* ord = new Order();
-//	orders.push_back(ord);
+	Order* ord = new Order();
+	listOfOrders.push_back(ord);
 
 }
 
-//Assignment operator
-Player& Player::operator=(const Player& p)
-{
-	if (&p != this) {
-		name = p.name;
-		territories = p.territories;
-		//orders = p.orders;
-	}
-	return *this;
-}
 
-//Player getName method to return the name of player as a string
-string Player::getName()
-{
-	return name;
-}
-
-//Player to print player's order list info
-void Player::printOrder()
-{
-//	//print out and test if player has terr
-//	cout << "The player " << this->getName() << " issues these orders: ";
-//	for (int i = 0; i < this->orders.size(); i++) {
-//		cout << this->orders.at(i) << "  ";
-//	}
-//	cout << this->orders.size() << " is the order list size\n";
-}
