@@ -1,8 +1,8 @@
-#pragma once
+
 #include <iostream>
 #include <vector>
-#include "Deck.h"
-#include "OrdersList.h"
+#include "Cards.h"
+#include "Orders.h"
 #include "Map.h"
 
 using namespace std;
@@ -16,17 +16,21 @@ public:
 	vector<Territory*> listOfTerritoriesOwned;
 	vector<Territory*> listOfTerritoriesToAttack;
 	vector<Territory*> listOfTerritoriesToDefend;
-	
+
+	// methods that return corresponding list
 	vector<Territory*> toDefend();
 	vector<Territory*> toAttack();
+
+	// methods that create and add an order to list of orders.
 	void issueOrder();
+
 
 private:
 
 	// vector that contains a list of Card objects
-	vector<Cards*> listOfCards;
+	vector<Hand*> listOfCards;
 
-	// vector that contains a list of Orders objects
+	// vector that contains a list of Order objects
 	vector<Order*> listOfOrders;
 
 
