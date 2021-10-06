@@ -10,26 +10,30 @@ static const char* enumStateStr[] = { "Start", "Map loaded", "Map validated", "P
 
 class GameEngine {
 
-// private members of the GameEngine class
+// private members
 private:
 
 	GameEngineState currentState;
 	void loadMap(std::string mapName);
-	//void addPlayer;
+	// void addPlayer;
 	// void assignCountries;
 	// void issueOrder;
-	// void endIssueORders;
+	// void endIssueOrders;
 	// void execOrder;
 	// void endExecOrders;
 	// void winGame;
 	// void endGame;
 	// void playGame;
 
-// public members of the GameEngine class
+// public members
 public:
 
 	GameEngine(); // constructor for the GameEngine
 	~GameEngine(); // destructor for the GameEngine
 	void sendCommand(GameEngineCommand command);
 	void validateMap();
+
+	// stream operator if necessary
+	friend ostream& operator<<(ostream& out, const GameEngine& ge);
+
 };

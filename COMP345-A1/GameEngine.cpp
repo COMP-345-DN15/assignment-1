@@ -38,7 +38,7 @@ void GameEngine::sendCommand(GameEngineCommand command)
         }
         else {
             //invalid state transition for current state
-            cout << "The state transition could not be made because the command from this state is invalid." << endl;
+            cout << "A state transition could not be made because the command from this state is invalid." << endl;
         }
         break;
 
@@ -51,9 +51,17 @@ void GameEngine::sendCommand(GameEngineCommand command)
             currentState = mapValidated;
             cout << "Current game state is: " << enumStateStr[GameEngineCommand::validateMap] << endl;
         }
+        else if (command == GameEngineCommand::loadMap)
+        {
+            // call to issueOrder transition
+            // loadMap();
+            // transition states and update currentState
+            currentState = mapLoaded;
+            cout << "Current game state is: " << enumStateStr[GameEngineCommand::loadMap] << endl;
+        }
         else {
            // invalid state transition for current state
-            cout << "The state transition could not be made because the command from this state is invalid." << endl;
+            cout << "A state transition could not be made because the command from this state is invalid." << endl;
         }
         break;
 
@@ -61,14 +69,14 @@ void GameEngine::sendCommand(GameEngineCommand command)
         if (command == GameEngineCommand::addPlayer)
         {
             // call to validateMap transition
-            // validateMap();
+            // addPlayer();
             // transition states and update currentState
             currentState = playersAdded;
             cout << "Current game state is: " << enumStateStr[GameEngineCommand::addPlayer] << endl;
         }
         else {
             // invalid state transition for current state
-            cout << "The state transition could not be made because the command from this state is invalid." << endl;
+            cout << "A state transition could not be made because the command from this state is invalid." << endl;
         }
         break;
 
@@ -81,14 +89,21 @@ void GameEngine::sendCommand(GameEngineCommand command)
             currentState = assignReinforcement;
             cout << "Current game state is: " << enumStateStr[GameEngineCommand::assignCountries] << endl;
         }
+        else if (command == GameEngineCommand::addPlayer)
+        {
+            // call to issueOrder transition
+            // addPlayer();
+            // transition states and update currentState
+            currentState = playersAdded;
+            cout << "Current game state is: " << enumStateStr[GameEngineCommand::addPlayer] << endl;
+        }
         else {
             // invalid state transition for current state
-            cout << "The state transition could not be made because the command from this state is invalid." << endl;
+            cout << "A state transition could not be made because the command from this state is invalid." << endl;
         }
         break;
 
     case assignReinforcement:
-        //TODO: add while loop for issueOrder command
         if (command == GameEngineCommand::issueOrder)
         {
             // call to assignCountries transition
@@ -99,7 +114,7 @@ void GameEngine::sendCommand(GameEngineCommand command)
         }
         else {
             // invalid state transition for current state
-            cout << "The state transition could not be made because the command from this state is invalid." << endl;
+            cout << "A state transition could not be made because the command from this state is invalid." << endl;
         }
         break;
 
@@ -112,9 +127,17 @@ void GameEngine::sendCommand(GameEngineCommand command)
             currentState = executeOrders;
             cout << "Current game state is: " << enumStateStr[GameEngineCommand::endIssueOrders] << endl;
         }
+        else if (command == GameEngineCommand::issueOrder)
+        {
+            // call to issueOrder transition
+            // issueOrder();
+            // transition states and update currentState
+            currentState = issueOrders;
+            cout << "Current game state is: " << enumStateStr[GameEngineCommand::issueOrder] << endl;
+        }
         else {
             // invalid state transition for current state
-            cout << "The state transition could not be made because the command from this state is invalid." << endl;
+            cout << "A state transition could not be made because the command from this state is invalid." << endl;
         }
         break;
 
@@ -127,14 +150,13 @@ void GameEngine::sendCommand(GameEngineCommand command)
             currentState = assignReinforcement;
             cout << "Current game state is: " << enumStateStr[GameEngineCommand::endExecOrders] << endl;
         }
-        //TODO add while loop for execOrder command
         else if (command == GameEngineCommand::execOrder)
         {
-            // call to execOrder transition
-            // execOrder();
-            // transition states and update currentState
-            currentState = executeOrders;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::execOrder] << endl;
+                // call to execOrder transition
+                // execOrder();
+                // transition states and update currentState
+                currentState = executeOrders;
+                cout << "Current game state is: " << enumStateStr[GameEngineCommand::execOrder] << endl;
         }
         else if (command == GameEngineCommand::winGame)
         {
@@ -146,7 +168,7 @@ void GameEngine::sendCommand(GameEngineCommand command)
         }
         else {
             // invalid state transition for current state
-            cout << "The state transition could not be made because the command from this state is invalid." << endl;
+            cout << "A state transition could not be made because the command from this state is invalid." << endl;
         }
         break;
 
@@ -167,7 +189,7 @@ void GameEngine::sendCommand(GameEngineCommand command)
         }
         else {
             // invalid state transition for current state
-            cout << "The state transition could not be made because the command from this state is invalid." << endl;
+            cout << "A state transition could not be made because the command from this state is invalid." << endl;
         }
         break;
 
@@ -182,7 +204,7 @@ void GameEngine::sendCommand(GameEngineCommand command)
         //}
         //else {
             // invalid state transition for current state
-            //cout << "The state transition could not be made because the command from this state is invalid." << endl;
+            //cout << "A state transition could not be made because the command from this state is invalid." << endl;
         //}
         //break;
      
