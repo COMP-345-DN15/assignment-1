@@ -1,5 +1,11 @@
 {
     "files.associations": {
-        "ostream": "cpp"
+        "*html": "html",
+        "*njk": "html",
+        "*erb": "html",
+        "ostream": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "iosfwd": "cpp"
     }
 }

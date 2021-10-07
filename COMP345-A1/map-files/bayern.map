@@ -1,0 +1,101 @@
+; map: bayern.map
+; map made with the map maker
+; yura.net Risk 1.0.9.3
+
+[files]
+pic bayern_pic.png
+map bayern_map.gif
+crd bayern.cards
+
+[continents]
+Unterfranken 5 white
+Mittelfranken 10 white
+Oberfranken 7 white
+Oberpfalz 10 white
+Schwaben 8 white
+Niederbayern 8 white
+Oberbayern 15 white
+
+[countries]
+1 Aschaffenburg 1 85 79
+2 Bad_Kissingen 1 133 45
+3 Schweinfurt 1 172 67
+4 Würzburg 1 142 105
+5 Bamberg 3 216 84
+6 Coburg 3 217 38
+7 Hof 3 292 45
+8 Bayreuth 3 258 78
+9 Weiden 4 315 92
+10 Amberg 4 285 139
+11 Neumarkt 4 266 172
+12 Schwandorf 4 323 151
+13 Cham 4 356 161
+14 Regensburg 4 317 193
+15 Ansbach 2 174 169
+16 Fürth 2 211 142
+17 Erlangen 2 189 121
+18 Nürnberg 2 229 178
+19 Donauwörth 5 194 223
+20 Augsburg 5 187 274
+21 Unterallgäu 5 163 320
+22 Oberallgäu 5 159 388
+23 Ostallgäu 5 188 348
+24 Lindau 5 132 379
+25 Kelheim 6 299 218
+26 Landshut 6 379 269
+27 Straubing 6 357 204
+28 Deggendorf 6 386 222
+29 Passau 6 423 233
+30 Ingolstadt 7 252 241
+31 Freising 7 288 263
+32 Fürstenfeld 7 249 289
+33 Starnberg 7 226 325
+34 Garmisch-Patenkirchen 7 229 363
+35 Bad_Tölz 7 277 358
+36 Rosenheim 7 343 333
+37 Berchtesgadener_Land 7 387 370
+38 Altötting 7 368 294
+39 Erding 7 311 294
+40 München 7 272 310
+
+[borders]
+1 2 3 4
+2 1 3
+3 1 4 2 5 6
+4 1 3 5 17
+5 4 3 6 8 17
+6 3 5 8 7
+7 6 8 9
+8 6 7 5 9 17 18 10
+9 7 8 10 12
+10 8 9 12 18 11
+11 12 18 10 14 30 25
+12 9 10 11 14 13
+13 12 14 27
+14 12 13 11 27 25
+15 16 18 19 17
+16 17 15 18
+17 4 5 8 16 18 15
+18 8 16 10 11 15 17 19 30
+19 18 15 30 20
+20 19 30 32 33 23 21
+21 20 23 22
+22 21 24 23
+23 20 21 22 33 34
+24 22
+25 31 26 30 14 11
+26 38 31 39 29 28 27 25
+27 26 29 28 14 13
+28 26 29 27
+29 26 28 27
+30 18 19 20 31 25 11 32
+31 40 39 32 30 25 26
+32 20 40 31 33 30
+33 20 23 34 35 40 32
+34 23 33 35
+35 34 33 40 36
+36 35 40 37 39 38
+37 36
+38 36 39 26
+39 40 36 38 31 26
+40 35 33 32 31 39 36
