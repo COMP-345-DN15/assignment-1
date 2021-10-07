@@ -27,12 +27,16 @@ Player::Player(string pname)
 {
 	playerName = pname;
 	listOfCards = new Hand();
+	listOfTerritoriesOwned = Territory owned[5];
+	listOfTerritoriesToDefend = Territory toDefend[5];
+	listOfTerritoriesToAttack = Territory toAttack[5];
 }
 
-Player::Player(std::vector<Map::Territory*>* TerritoriesOwned, Hand* Cards, vector<Map::Territory*> TerritoriesToDefend, const string name) {
+Player::Player(std::vector<Map::Territory*>* TerritoriesOwned, Hand* Cards, vector<Map::Territory*> TerritoriesToDefend, vector<Map::Territory*> TerritoriesToAttack, const string name) {
 	listOfTerritoriesOwned = OfTerritoriesOwned;
 	listOfCards = Cards;
 	listOfTerritoriesToDefend = TerritoriesToDefend;
+	listOfTerritoriesToAttack = TerritoriesToAttack;
 	playerName = name;
 }
 
@@ -62,22 +66,22 @@ Player::~Player()
 
 //ToAttack() method return a list of territories
 vector<Territory*> Player::toAttack() {
-	// for now only arbitary territory list returned
-	vector<Territory*> terrAttack;
+	// for now only empty territory list returned
+	vector<Territory*> listOfTerritoriesToAttack;
 	for (vector<Territory*>::iterator it = territories.begin(); it != territories.end(); ++it) {
-		terrAttack.push_back(*it);
+		listOfTerritoriesToAttack.push_back(*it);
 	}
-	return terrAttack;
+	return listOfTerritoriesToAttack;
 }
 
 //ToDefend() method return a list of territories
 vector<Territory*> Player::toDefend() {
-	// for now only arbitary territory list returned
-	vector<Territory*> terrDefend;
+	// for now only empty territory list returned
+	vector<Territory*> listOfTerritoriesToDefend;
 	for (vector<Territory*>::iterator it = territories.begin(); it != territories.end(); ++it) {
-		terrDefend.push_back(*it);
+		listOfTerritoriesToDefend.push_back(*it);
 	}
-	return terrDefend;
+	return listOfTerritoriesToDefend;
 }
 
 //IssueOrder() will creat a order obj and add it to player's order list

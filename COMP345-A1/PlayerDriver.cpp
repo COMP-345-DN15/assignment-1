@@ -8,7 +8,7 @@ using namespace std;
 int main() {
 
 	cout << "testing player owns--------------------------\n";
-	Player* p1ayer = new Player();
+	Player* p1ayer = new Player('demoPlayer');
 	cout << *p1ayer;	//stream insetipn operator
 
 	//testing toDefend()

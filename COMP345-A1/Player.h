@@ -35,4 +35,7 @@ private:
 
 
 };
+class Territory {
+	cout << "This is a territory";
+};
 
