@@ -9,7 +9,7 @@ using namespace std;
 //Will create orders list, add list of orders to list, 
 void OrdersTest() {
 	//create test list
-	OrdersList test; 
+	OrdersList test;
 
 	//create different orders, first all true, then all false 
 	Deploy deployTest;
@@ -30,8 +30,11 @@ void OrdersTest() {
 	Negotiate negotiateTest;
 	test.add(&negotiateTest);
 
+
+	//false orders
 	Deploy deployTestFalse("Deploy Order", "Deploy effect", false);
 	test.add(&deployTestFalse);
+
 
 	Advance advanceTestFalse("Advance Order", "Advance effect", false);
 	test.add(&advanceTestFalse);
@@ -49,20 +52,22 @@ void OrdersTest() {
 	test.add(&negotiateTestFalse);
 
 
+
+
 	//testing execute for the orderslist, will return true for first half then false second half, since if validate() returns true, execute returns true
 	for (auto ordersIterator = test.orders.begin(); ordersIterator != test.orders.end(); ordersIterator++) {
-		cout << (*ordersIterator)->execute();
-
+		//iterates through list, will print effect if executed. 
+		(*ordersIterator)->execute();
 	}
 
 	//move function tester
-	test.toString();
+	cout << test << endl;
 	test.move(1, 6);
-	test.toString();
+	cout << test << endl;
 
 	//remove function tester
-	test.toString();
+	cout << test << endl;
 	test.remove(1);
-	test.toString();
+	cout << test << endl;
 
 }

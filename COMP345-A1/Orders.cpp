@@ -4,18 +4,18 @@
 
 //default constructor
 Order::Order() : Order("This is an order.", "This is the effect", true) {
-//empty
+	
 	}
 
 //para constructor
-Order::Order(string description, string effect, bool valid) : description(new string(description)), effect(new string (effect)){
-	isValid = &valid;
+Order::Order(string description, string effect, bool valid) : description(new string(description)), effect(new string(effect)), isValid(new bool(valid))  {
+	
 	}
 //copy constructor
 Order::Order(const Order& orderToCopy) {
 	this->description = new string(*(orderToCopy.description));
 	this->effect = new string(*(orderToCopy.effect));
-	this->isValid = orderToCopy.isValid;
+	*this->isValid = orderToCopy.isValid;
 	}
 
 //Destructor
@@ -32,6 +32,13 @@ string Order::toString() {
 string Order::getEffect() {
 	return *effect;
 }
+
+bool Order::getValid() {
+	if (*this->isValid) {
+		return true;
+	}
+	else return false;
+}
 //stream insertion operator overload
 ostream& operator<<(ostream& out, const Order& orderToStream) {
 	out << *(orderToStream.description);
@@ -40,7 +47,7 @@ ostream& operator<<(ostream& out, const Order& orderToStream) {
 //stream assignment operator overload
 Order& Order::operator=(const Order& orderToAssign) {
 	this->description = new string(*(orderToAssign.description));
-	this->isValid = orderToAssign.isValid;
+	*this->isValid = orderToAssign.isValid;
 	return *this;
 }
 
@@ -54,7 +61,7 @@ Deploy::Deploy() : Order("Deploy Order", "Deploy effect", true) {
 Deploy::Deploy(string description, string effect,bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	this->isValid = &valid;
+	*this->isValid = valid;
 	}
 
 //copy constructor
@@ -69,15 +76,17 @@ Deploy::~Deploy() {
 
 //inherited validate, for now just checks if true
 bool Deploy::validate() {
-	if (this->isValid)
+	if (*this->isValid)
 		return true;
 	else return false;
 }
 
 //execute if validate returns true
 bool Deploy::execute() {
-	if (this->validate())
+	if (this->validate()) {
+		cout << this->getEffect() << endl;
 		return true;
+	}
 	else return false;
 }
 
@@ -103,7 +112,7 @@ Advance::Advance() : Order("Advance Order", "Advance effect", true) {
 Advance::Advance(string description, string effect, bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	this->isValid = &valid;
+	*this->isValid = valid;
 }
 
 //copy constructor
@@ -118,15 +127,17 @@ Advance::~Advance() {
 
 //inherited validate, for now just checks if true
 bool Advance::validate() {
-	if (this->isValid)
+	if (*this->isValid)
 		return true;
 	else return false;
 }
 
 //execute if validate returns true
 bool Advance::execute() {
-	if (this->validate())
+	if (this->validate()) {
+		cout << this->getEffect() << endl;
 		return true;
+	}
 	else return false;
 }
 
@@ -151,7 +162,7 @@ Bomb::Bomb() : Order("Bomb Order", "Bomb effect", true) {
 Bomb::Bomb(string description, string effect, bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	this->isValid = &valid;
+	*this->isValid = valid;
 }
 
 //copy constructor
@@ -166,15 +177,17 @@ Bomb::~Bomb() {
 
 //inherited validate, for now just checks if true
 bool Bomb::validate() {
-	if (this->isValid)
+	if (*this->isValid)
 		return true;
 	else return false;
 }
 
 //execute if validate returns true
 bool Bomb::execute() {
-	if (this->validate())
+	if (this->validate()) {
+		cout << this->getEffect() << endl;
 		return true;
+	}
 	else return false;
 }
 
@@ -199,7 +212,7 @@ Blockade::Blockade() : Order("Blockade Order", "Blockade effect", true) {
 Blockade::Blockade(string description, string effect,bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	this->isValid = &valid;
+	*this->isValid = valid;
 }
 
 //copy constructor
@@ -214,15 +227,17 @@ Blockade::~Blockade() {
 
 //inherited validate, for now just checks if true
 bool Blockade::validate() {
-	if (this->isValid)
+	if (*this->isValid)
 		return true;
 	else return false;
 }
 
 //execute if validate returns true
 bool Blockade::execute() {
-	if (this->validate())
+	if (this->validate()) {
+		cout << this->getEffect() << endl;
 		return true;
+	}
 	else return false;
 }
 
@@ -247,7 +262,7 @@ Airlift::Airlift() : Order("Airlift Order", "Airlift order", true) {
 Airlift::Airlift(string description, string effect, bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	this->isValid = &valid;
+	*this->isValid = valid;
 }
 
 //copy constructor
@@ -262,15 +277,17 @@ Airlift::~Airlift() {
 
 //inherited validate, for now just checks if true
 bool Airlift::validate() {
-	if (this->isValid)
+	if (*this->isValid)
 		return true;
 	else return false;
 }
 
 //execute if validate returns true
 bool Airlift::execute() {
-	if (this->validate())
+	if (this->validate()) {
+		cout << this->getEffect() << endl;
 		return true;
+	}
 	else return false;
 }
 
@@ -295,7 +312,7 @@ Negotiate::Negotiate() : Order("Negotiate Order", "Negotiate effect", true) {
 Negotiate::Negotiate(string description, string effect, bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	this->isValid = &valid;
+	*this->isValid = valid;
 }
 
 //copy constructor
@@ -310,15 +327,17 @@ Negotiate::~Negotiate() {
 
 //inherited validate, for now just checks if true
 bool Negotiate::validate() {
-	if (this->isValid)
+	if (*this->isValid)
 		return true;
 	else return false;
 }
 
 //execute if validate returns true
 bool Negotiate::execute() {
-	if (this->validate())
+	if (this->validate()) {
+		cout << this->getEffect() << endl;
 		return true;
+	}
 	else return false;
 }
 
