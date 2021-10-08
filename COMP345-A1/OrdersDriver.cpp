@@ -51,7 +51,7 @@ void OrdersTest() {
 	Negotiate negotiateTestFalse("Negotiate Order", "Negotiate effect", false);
 	test.add(&negotiateTestFalse);
 
-
+	
 
 
 	//testing execute for the orderslist, will return true for first half then false second half, since if validate() returns true, execute returns true
@@ -69,5 +69,6 @@ void OrdersTest() {
 	cout << test << endl;
 	test.remove(1);
 	cout << test << endl;
+
 
 }

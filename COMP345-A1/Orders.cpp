@@ -15,14 +15,12 @@ Order::Order(string description, string effect, bool valid) : description(new st
 Order::Order(const Order& orderToCopy) {
 	this->description = new string(*(orderToCopy.description));
 	this->effect = new string(*(orderToCopy.effect));
-	*this->isValid = orderToCopy.isValid;
+	this->isValid = new bool (*(orderToCopy.isValid));
 	}
 
 //Destructor
 Order::~Order() {
-	delete description;
-	delete effect;
-	delete isValid;
+
 	}
 //to string, returns description
 string Order::toString() {
@@ -61,7 +59,7 @@ Deploy::Deploy() : Order("Deploy Order", "Deploy effect", true) {
 Deploy::Deploy(string description, string effect,bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	*this->isValid = valid;
+	this->isValid = &valid;
 	}
 
 //copy constructor
@@ -71,7 +69,7 @@ Deploy::Deploy(const Deploy& deployToCopy) : Order(deployToCopy) {
 
 //Destructor
 Deploy::~Deploy() {
-	//maybe later
+
 }
 
 //inherited validate, for now just checks if true
@@ -112,7 +110,7 @@ Advance::Advance() : Order("Advance Order", "Advance effect", true) {
 Advance::Advance(string description, string effect, bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	*this->isValid = valid;
+	this->isValid = &valid;
 }
 
 //copy constructor
@@ -122,7 +120,7 @@ Advance::Advance(const Advance& advanceToCopy) : Order(advanceToCopy) {
 
 //Destructor
 Advance::~Advance() {
-	//maybe later
+
 }
 
 //inherited validate, for now just checks if true
@@ -162,7 +160,7 @@ Bomb::Bomb() : Order("Bomb Order", "Bomb effect", true) {
 Bomb::Bomb(string description, string effect, bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	*this->isValid = valid;
+	this->isValid = &valid;
 }
 
 //copy constructor
@@ -172,7 +170,6 @@ Bomb::Bomb(const Bomb& bombToCopy) : Order(bombToCopy) {
 
 //Destructor
 Bomb::~Bomb() {
-	//maybe later
 }
 
 //inherited validate, for now just checks if true
@@ -212,7 +209,7 @@ Blockade::Blockade() : Order("Blockade Order", "Blockade effect", true) {
 Blockade::Blockade(string description, string effect,bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	*this->isValid = valid;
+	this->isValid = &valid;
 }
 
 //copy constructor
@@ -222,7 +219,7 @@ Blockade::Blockade(const Blockade& blockadeToCopy) : Order(blockadeToCopy) {
 
 //Destructor
 Blockade::~Blockade() {
-	//maybe later
+
 }
 
 //inherited validate, for now just checks if true
@@ -262,7 +259,7 @@ Airlift::Airlift() : Order("Airlift Order", "Airlift order", true) {
 Airlift::Airlift(string description, string effect, bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	*this->isValid = valid;
+	this->isValid = &valid;
 }
 
 //copy constructor
@@ -272,7 +269,7 @@ Airlift::Airlift(const Airlift& airliftToCopy) : Order(airliftToCopy) {
 
 //Destructor
 Airlift::~Airlift() {
-	//maybe later
+
 }
 
 //inherited validate, for now just checks if true
@@ -312,7 +309,7 @@ Negotiate::Negotiate() : Order("Negotiate Order", "Negotiate effect", true) {
 Negotiate::Negotiate(string description, string effect, bool valid) {
 	this->description = &description;
 	this->effect = &effect;
-	*this->isValid = valid;
+	this->isValid = &valid;
 }
 
 //copy constructor
@@ -322,7 +319,7 @@ Negotiate::Negotiate(const Negotiate& negotiateToCopy) : Order(negotiateToCopy) 
 
 //Destructor
 Negotiate::~Negotiate() {
-	//maybe later
+
 }
 
 //inherited validate, for now just checks if true
@@ -370,11 +367,7 @@ OrdersList::OrdersList(const OrdersList &ordersListToCopy) {
 
 //Destructor
 OrdersList::~OrdersList() {
-	for (Order* order : orders) {
-		delete order;
-
-	}
-	orders.clear();
+	
 }
 
 //service funcs for lists
@@ -391,7 +384,7 @@ void OrdersList::move(int oldIndex, int newIndex) {
 	auto newPosition = orders.begin();
 	advance(newPosition, newIndex);
 	orders.splice(newPosition, orders, oldPosition);
-}
+	}
 
 
 //remove an entry. uses iterator to find the correct index then erases entry 
