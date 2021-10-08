@@ -13,3 +13,7 @@ public:
 private:
 
 };
+
+class Territory {
+
+};
