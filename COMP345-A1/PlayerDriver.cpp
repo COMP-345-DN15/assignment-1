@@ -2,14 +2,15 @@
 #include "Map.h"
 #include "Orders.h"
 #include <iostream>
+#include <string>
 
 using namespace std;
 
 int main() {
 
 	cout << "testing player owns--------------------------\n";
-	Player* p1ayer = new Player('demoPlayer');
-	cout << *p1ayer;	//stream insetipn operator
+	Player* p1ayer = new Player("demo");
+	p1ayer->print();
 
 	//testing toDefend()
 	cout << "testing toDefend() method--------------------------------\n";
@@ -22,7 +23,6 @@ int main() {
 
 	cout << "testing issueOrder() method---------------------------------\n";
 	p1ayer->issueOrder();
-	cout << *p1ayer;
 
 	//delete player that created
 	delete p1ayer;

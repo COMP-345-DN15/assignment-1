@@ -7,6 +7,7 @@
 #include <ostream>
 #include <typeinfo>
 #include <cstring>
+#include <algorithm>
 using namespace std;
 
 
@@ -14,53 +15,62 @@ using namespace std;
 Player::Player()
 {
 	name = "";
-	hand = new Hand();
+	cards = new Hand();
 
 }
 
-
-Player() = default;
-Player(std::vector<Country> countries, Hand hand, DiceFacility dice, int playerNumber, Strategy * strategy);
+Territory::Territory(){
+	cout << "This is a territory\n";
+};
+Cards::Cards() {
+	cout << "This is a card\n";
+};
+Order::Order() {
+	cout << "This is a order\n";
+};
 
 //Parametric construtor 
-Player::Player(string pname)
+Player::Player(std::string pname)
 {
-	playerName = pname;
-	listOfCards = new Hand();
-	listOfTerritoriesOwned = Territory owned[5];
-	listOfTerritoriesToDefend = Territory toDefend[5];
-	listOfTerritoriesToAttack = Territory toAttack[5];
-}
-
-Player::Player(std::vector<Map::Territory*>* TerritoriesOwned, Hand* Cards, vector<Map::Territory*> TerritoriesToDefend, vector<Map::Territory*> TerritoriesToAttack, const string name) {
-	listOfTerritoriesOwned = OfTerritoriesOwned;
-	listOfCards = Cards;
-	listOfTerritoriesToDefend = TerritoriesToDefend;
-	listOfTerritoriesToAttack = TerritoriesToAttack;
-	playerName = name;
+	name = pname;
+	cards = new Hand();
 }
 
 
 // Player destructor
 Player::~Player()
 {
-	delete listOfCards;
-	listOfCards = nullptr;
+	delete cards;
+	cards = nullptr;
 }
 Player::~Player()
 {
-	delete listOfCards;
-	listOfCards = nullptr;
-	delete listOfTerritoriesOwned;
-	listOfTerritoriesOwned = nullptr;
-	delete listOfTerritoriesToDefend;
-	listOfTerritoriesToDefend = nullptr;
-	delete listOfTerritoriesToAttack;
-	listOfTerritoriesToAttack = nullptr;
-	delete playerName;
-	playerName = nullptr;
-	delete listOfOrders;
-	listOfOrders = nullptr;
+	delete cards;
+	cards = nullptr;
+	for (auto p : listOfTerritoriesOwned)
+	{
+		delete p;
+	}
+	listOfTerritoriesOwned.clear();
+
+	for (auto p : listOfTerritoriesToDefend)
+	{
+		delete p;
+	}
+	listOfTerritoriesToDefend.clear();
+
+	for (auto p : listOfTerritoriesToAttack)
+	{
+		delete p;
+	}
+	listOfTerritoriesToAttack.clear();
+
+	for (auto p : listOfOrders)
+	{
+		delete p;
+	}
+	listOfOrders.clear();
+
 }
 
 
@@ -68,7 +78,7 @@ Player::~Player()
 vector<Territory*> Player::toAttack() {
 	// for now only empty territory list returned
 	vector<Territory*> listOfTerritoriesToAttack;
-	for (vector<Territory*>::iterator it = territories.begin(); it != territories.end(); ++it) {
+	for (vector<Territory*>::iterator it = listOfTerritoriesToAttack.begin(); it != listOfTerritoriesToAttack.end(); ++it) {
 		listOfTerritoriesToAttack.push_back(*it);
 	}
 	return listOfTerritoriesToAttack;
@@ -78,7 +88,7 @@ vector<Territory*> Player::toAttack() {
 vector<Territory*> Player::toDefend() {
 	// for now only empty territory list returned
 	vector<Territory*> listOfTerritoriesToDefend;
-	for (vector<Territory*>::iterator it = territories.begin(); it != territories.end(); ++it) {
+	for (vector<Territory*>::iterator it = listOfTerritoriesToDefend.begin(); it != listOfTerritoriesToDefend.end(); ++it) {
 		listOfTerritoriesToDefend.push_back(*it);
 	}
 	return listOfTerritoriesToDefend;
@@ -87,9 +97,12 @@ vector<Territory*> Player::toDefend() {
 //IssueOrder() will creat a order obj and add it to player's order list
 void Player::issueOrder()
 {	//every time make a new order obj there will be a printout to show it works
-	Order* ord = new Order();
-	listOfOrders.push_back(ord);
+	//Order* ord = new Order();
+	//listOfOrders.push_back(ord);
 
 }
-
+void  Player::print()
+{
+	cout << "this is player"<<name<<endl;
+}
 
