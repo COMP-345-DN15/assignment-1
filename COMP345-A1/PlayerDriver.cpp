@@ -1,32 +1,37 @@
-#include "Player.h"
-#include "Map.h"
-#include "Orders.h"
+
 #include <iostream>
+#include <string>
+#include "Player.h"
 
 using namespace std;
 
-int main() {
+void testPlayer() {
 
 	cout << "testing player owns--------------------------\n";
-	Player* p1ayer = new Player();
-	cout << *p1ayer;	//stream insetipn operator
+	Player* player = new Player("demo");
+	player->print();
+
+	Territory* landToDefend = new Territory;
+	player->listOfTerritoriesToDefend.push_back(landToDefend);
 
 	//testing toDefend()
 	cout << "testing toDefend() method--------------------------------\n";
-	p1ayer->toDefend();
+	player->toDefend();
+
+	Territory* landToAttack = new Territory;
+	player->listOfTerritoriesToDefend.push_back(landToAttack);
 
 	//testing toAttack()
 	cout << "testing toAttack() method---------------------------------\n";
-	p1ayer->toAttack();
+	player->toAttack();
 
 
 	cout << "testing issueOrder() method---------------------------------\n";
-	p1ayer->issueOrder();
-	cout << *p1ayer;
+	player->issueOrder();
 
 	//delete player that created
-	delete p1ayer;
+	delete player;
 
 	_CrtDumpMemoryLeaks();
-	return 0;
+	//return 0;
 }

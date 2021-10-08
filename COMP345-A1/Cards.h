@@ -46,7 +46,7 @@ public:
 
 class Hand {
 public:
-
+    Hand();
 private:
 	// vector that contains a list of Card objects
 	vector<Cards> cards;
