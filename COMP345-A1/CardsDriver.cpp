@@ -1,114 +1,46 @@
-#include<iostream>
-#include <vector>
+ #include<iostream>
+ #include <vector>
+ #include <ctime>
+ #include <stdlib.h>     /* srand, rand */
+ #include "Cards.h"
 
-using namespace std;
-
-// Cards Class
-class Cards {
-    enum cardType { bomb, reinforcement, blockade, airlift, diplomacy };
-	cardType ctype;    
+ using std::cin;
+ using std::cout;
 
 
-public:
-    //constructor
-
-    Cards() {}
-
-    Cards(int x){
-
-    if (x ==0)
-    ctype=bomb;
-    if (x==1)
-    ctype=reinforcement;
-    if (x==2)
-    ctype=blockade;
-    if (x==3)
-    ctype=airlift;
-    if (x==4)
-    ctype=diplomacy;
-
-    }
-
-    //
-    string display_card(){
-    if (ctype==0)
-        return "bomb";
-
-    if (ctype==1)
-        return "reinforcement";
-
-    if (ctype==2)
-        return "blockade";
-
-    if (ctype==3)
-        return "airlift";
-
-    if (ctype==4)
-        return "diplomacy";
-    }
+ using namespace std;
 
 
 
 
-// };
 
-class Deck {
+ int main(){
 
-    private:
-	// vector that contains a list of Card objects
-	Cards card;
-	vector<Cards> cards;
-	
+     std::cout <<"Warzome is setting up the deck"<<endl;
+     Deck d;
 
-    public:
-        Deck() {
-            // std::cout << "Deck()" << endl;
-            
-            for (int count= 0; count<5; count++)
-            {
-                
-                    for (int count = 0; count < 5; count++) {
-                         Cards c = Cards(count);
-                         add_to_deck(c);
-                    }
+     std::cout <<"-----------------------------------"<<endl;
 
-            }
-
-        }   
-
-        //adding the card to the deck
-            void add_to_deck(Cards c){
-                
-                cards.push_back(c);
-            }
-
-
-            void print_deck(){
-            for (int i=0; i<cards.size(); i++)
-
-             std::cout << cards.at(i).display_card() << endl;
-
-            }
-
-            void shuffle_deck(){
-
-            }
-
-
-;
-};
-
+     std::cout <<"Warzome is printing the deck..."<<endl;
+     d.print_deck();
+     std::cout <<"The deck has "<< d.getsize()<<" cards."<<endl;
+     std::cout <<"-----------------------------------"<<endl;
     
+     std::cout <<"-----------------------------------"<<endl;
+     d.draw();
+     std::cout <<"-----------------------------------"<<endl;
+     std::cout <<"The deck has "<< d.getsize()<<" cards."<<endl;
+     std::cout <<"-----------------------------------"<<endl;
+     std::cout <<"Printing new Deck.........."<<endl;
+     d.print_deck();
 
 
 
-//  Cards Driver
 
-int main(){
+     return 0;
 
-    Deck d;
-    d.print_deck();
+ };
 
-    return 0;
 
-};
+
+

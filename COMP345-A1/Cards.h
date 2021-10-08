@@ -1,5 +1,10 @@
 #pragma once
+#include<iostream>
 #include <vector>
+#include <ctime>
+#include <string>
+#include <stdlib.h>     /* srand, rand */
+
 
 using namespace std;
 
@@ -12,7 +17,7 @@ class Cards {
 	public:
 	//special order played by the player and sent back to the deck once it is played
 		Cards();
-		int display_card();
+		string display_card();
 		Cards(int x);
 		void play();
 
@@ -32,20 +37,18 @@ public:
 	Deck();
 	void add_to_deck(Cards c);
 	void print_deck();
-	Cards draw();
-	void returnToDeck(Cards);
-	
-
+	void draw();
+ 	int getsize();	
+	void shuffle_deck();
 
 };
 
 
 class Hand {
-
 public:
+    Hand();
 
 private:
-
 	// vector that contains a list of Card objects
 	vector<Cards> cards;
 

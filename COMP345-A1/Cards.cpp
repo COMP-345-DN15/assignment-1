@@ -1,71 +1,120 @@
-#include "Cards.h"
 #include<iostream>
+#include <vector>
+#include <ctime>
+#include <stdlib.h>     /* srand, rand */
+#include "Cards.h"
 using namespace std;
 
 
 
-int const deck_size=25;
-int const limit_card_type= 5;
+
+ 
 
 
-enum cardType { bomb, reinforcement, blockade, airlift, diplomacy };
+    //default constructor
+    Cards::Cards() {}
 
-//Card constructor
+    //cobstructor setting the card type
+    Cards::Cards(int x){
 
-
-Cards::Cards(int x){
-
-if (x ==0)
+    if (x ==0)
     ctype=bomb;
-if (x==1)
+    if (x==1)
     ctype=reinforcement;
-if (x==2)
+    if (x==2)
     ctype=blockade;
-if (x==3)
+    if (x==3)
     ctype=airlift;
-if (x==4)
+    if (x==4)
     ctype=diplomacy;
 
-}
+    }
 
-int Cards::display_card(){
-    return ctype;
-}
+    //empty method for now
+    void Cards::play(){
 
-//adding the card to the deck
-void Deck::add_to_deck(Cards c){
-    cards.push_back(c);
-}
+        //play the card
+    }
 
-void Deck::print_deck(){
-    for (int i=0; i<cards.size(); i++)
-       std::cout << cards.at(i).display_card() << endl;
+    //displays the type of card
+    string Cards::display_card(){
+    if (ctype==0)
+        return "bomb";
 
-}
+    if (ctype==1)
+        return "reinforcement";
 
-//Deck Constructor
-//initializing a deck of cards 
-Deck::Deck() {
+    if (ctype==2)
+        return "blockade";
 
-    cout << "initializing Deck()" << endl;
+    if (ctype==3)
+        return "airlift";
+
+    if (ctype==4)
+        return "diplomacy";
+    }
+
+
+
+
+
+
+  
+	
+
     
-        for (int count= 0; count<5; count++)
-        {
-            Cards card;
+        Deck::Deck() {
+            // std::cout << "Deck()" << endl;
+            
+            for (int count= 0; count<5; count++)
+            {
+                
+                    for (int count = 0; count < 5; count++) {
+                         Cards c = Cards(count);
+                         add_to_deck(c);
+                    }
 
-                for (int count = 0; count < 5; count++) {
-                    card = Cards(count);
-                    add_to_deck(card);
-                }
+            }
 
-        }
+        }   
 
-
-}
-
-
+        //adding the card to the deck
+            void Deck::add_to_deck(Cards c){
+                
+                cards.push_back(c);
+            }
 
 
+            void Deck::print_deck(){
+            for (int i=0; i<cards.size(); i++)
 
-//Hand cobstructor
+             std::cout << cards.at(i).display_card() << endl;
+
+            }
+
+            void Deck::shuffle_deck(){
+
+            };
+
+            //randomly draw a card from the card deck
+            void Deck::draw(){
+
+                int random_num;
+                srand(time(NULL));
+                random_num = rand()%cards.size();
+                Cards rand_card = cards.at(random_num);
+                cards.erase(cards.begin()+(random_num+1));
+                
+                std::cout <<"Player is now drawing a random card from deck... Player drew got the following card: "<<random_num+1 <<endl;
+                std::cout <<rand_card.display_card()<<endl;
+            }
+
+            int Deck::getsize(){
+
+                return cards.size();
+            }
+
+            Hand::Hand(){}
+
+
 
