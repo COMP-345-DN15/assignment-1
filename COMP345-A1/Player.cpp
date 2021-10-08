@@ -1,36 +1,20 @@
-#include "Player.h"
-#include "Map.h"
-#include "Cards.h"
-#include "Orders.h"
 
 #include <iostream>
 #include <ostream>
 #include <typeinfo>
 #include <cstring>
 #include <algorithm>
+#include "Player.h"
 using namespace std;
 
 
 //Default constructor
-Player::Player()
-{
-	name = "";
-	cards = new Hand();
+Player::Player(){}
 
-}
 
-Territory::Territory(){
-	cout << "This is a territory\n";
-};
-Cards::Cards() {
-	cout << "This is a card\n";
-};
-Order::Order() {
-	cout << "This is a order\n";
-};
 
 //Parametric construtor 
-Player::Player(std::string pname)
+Player::Player(string pname)
 {
 	name = pname;
 	cards = new Hand();
@@ -38,11 +22,6 @@ Player::Player(std::string pname)
 
 
 // Player destructor
-Player::~Player()
-{
-	delete cards;
-	cards = nullptr;
-}
 Player::~Player()
 {
 	delete cards;
@@ -70,7 +49,6 @@ Player::~Player()
 		delete p;
 	}
 	listOfOrders.clear();
-
 }
 
 
@@ -80,6 +58,7 @@ vector<Territory*> Player::toAttack() {
 	vector<Territory*> listOfTerritoriesToAttack;
 	for (vector<Territory*>::iterator it = listOfTerritoriesToAttack.begin(); it != listOfTerritoriesToAttack.end(); ++it) {
 		listOfTerritoriesToAttack.push_back(*it);
+		std::cout << *it << std::endl;
 	}
 	return listOfTerritoriesToAttack;
 }
@@ -97,12 +76,12 @@ vector<Territory*> Player::toDefend() {
 //IssueOrder() will creat a order obj and add it to player's order list
 void Player::issueOrder()
 {	//every time make a new order obj there will be a printout to show it works
-	//Order* ord = new Order();
-	//listOfOrders.push_back(ord);
+	Order* ord = new Bomb();
+	listOfOrders.push_back(ord);
 
 }
 void  Player::print()
 {
-	cout << "this is player"<<name<<endl;
+	cout << "this is player:"<<name<<endl;
 }
 

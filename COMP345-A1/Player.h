@@ -7,6 +7,7 @@
 
 using namespace std;
 
+
 class Player {
 
 public:
@@ -19,6 +20,7 @@ public:
 
 	Player();
 	Player(string pname);
+	~Player();
 	// methods that return corresponding list
 	vector<Territory*> toDefend();
 	vector<Territory*> toAttack();
@@ -26,6 +28,7 @@ public:
 	// methods that create and add an order to list of orders.
 	void issueOrder();
 	void print();
+
 
 
 private:
@@ -36,8 +39,6 @@ private:
 	// vector that contains a list of Order objects
 	vector<Order*> listOfOrders;
 
-
+	
 };
-class Territory {};
-class Cards {};
 
