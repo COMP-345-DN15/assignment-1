@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int main() {
+void testPlayer() {
 
 	cout << "testing player owns--------------------------\n";
 	Player* player = new Player("demo");
@@ -33,5 +33,5 @@ int main() {
 	delete player;
 
 	_CrtDumpMemoryLeaks();
-	return 0;
+	//return 0;
 }

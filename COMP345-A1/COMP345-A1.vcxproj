@@ -214,7 +214,9 @@
     <ClInclude Include="GameEngineDriver.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Orders.h" />
+    <ClInclude Include="OrdersDriver.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerDriver.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
