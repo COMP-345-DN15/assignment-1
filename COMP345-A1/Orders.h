@@ -7,6 +7,7 @@
 class Order;
 class OrdersList;
 
+using std::cout;
 using std::string;
 using std::ostream;
 using std::list;
@@ -28,6 +29,7 @@ public:
 	string toString();
 	//returns effect
 	string getEffect();
+	bool getValid();
 
 	//validate to inherit, virtual for child classes
 	virtual bool validate() = 0;
@@ -39,7 +41,7 @@ public:
 	friend ostream& operator<<(ostream& out, const Order& o);
 
 	virtual Order& operator=(const Order& o);
-protected:
+
 	string* description;
 	string* effect; 
 	bool* isValid;
@@ -181,7 +183,5 @@ public:
 	//stream stuff
 	friend ostream& operator<<(ostream& out, const OrdersList& ordersListToStream);
 	OrdersList& operator=(OrdersList& ordersListToAssign);
-
-private:
 	list<Order*> orders;
 };
