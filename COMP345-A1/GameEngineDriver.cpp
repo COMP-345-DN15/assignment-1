@@ -32,13 +32,35 @@ GameEngineCommand getCommandFromUser()
 		return winGame;
 	else if (userInput.compare("endGame") == 0)
 		return endGame;
+	else if (userInput.compare("playGame") == 0)
+		return playGame;
+
+	// commands that can be run multiple times
+	while (userInput.compare("execOrder") == 0) {
+		return execOrder;
+	}
+
+	while (userInput.compare("issueOrder") == 0) {
+		return issueOrder;
+	}
+
+	while (userInput.compare("addPlayer") == 0) {
+		return addPlayer;
+	}
+
+	while (userInput.compare("loadMap") == 0) {
+		return loadMap;
+	}
 
 	return invalidCommand;
 }
 
 void testGameEngine()
 {
-	std::cout << "Testing game engine" << std::endl;
+	cout << "===================" << endl;
+	cout << "Welcome to Warzone" << endl;
+	cout << "===================\n" << endl;
+	cout << "Testing game engine\n" << endl;
 
 	GameEngine* gameEngine = new GameEngine();
 
@@ -50,7 +72,10 @@ void testGameEngine()
 
 		//send the user's command to the engine
 		gameEngine->sendCommand(latestUserCommand);
-
-		break;
 	}
+
+	// delete gameEngine that was created
+	delete gameEngine;
 }
+
+
