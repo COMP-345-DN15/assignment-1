@@ -53,20 +53,27 @@ void OrdersTest() {
 
 	
 
-
+	cout << "Will print effect when order is valid and executed, iterates over entire orderslist." << endl;
 	//testing execute for the orderslist, will return true for first half then false second half, since if validate() returns true, execute returns true
 	for (auto ordersIterator = test.orders.begin(); ordersIterator != test.orders.end(); ordersIterator++) {
 		//iterates through list, will print effect if executed. 
 		(*ordersIterator)->execute();
 	}
 
+	cout << " " << endl;
+	cout << "Move function test"<< endl;
 	//move function tester
 	cout << test << endl;
+	cout << "Move happens here" << endl;
 	test.move(1, 6);
 	cout << test << endl;
 
+
+	cout << " " << endl;
+	cout << "Remove Function test" << endl;
 	//remove function tester
 	cout << test << endl;
+	cout << "Remove happens here" << endl;
 	test.remove(1);
 	cout << test << endl;
 
