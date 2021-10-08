@@ -210,6 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cards.h" />
+    <ClInclude Include="CardsDriver.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="GameEngineDriver.h" />
     <ClInclude Include="Map.h" />
