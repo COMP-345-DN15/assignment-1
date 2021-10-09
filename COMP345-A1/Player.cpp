@@ -60,6 +60,7 @@ vector<Territory*> Player::toAttack() {
 		listOfTerritoriesToAttack.push_back(*it);
 		std::cout << *it << std::endl;
 	}
+	
 	return listOfTerritoriesToAttack;
 }
 
@@ -69,6 +70,7 @@ vector<Territory*> Player::toDefend() {
 	vector<Territory*> listOfTerritoriesToDefend;
 	for (vector<Territory*>::iterator it = listOfTerritoriesToDefend.begin(); it != listOfTerritoriesToDefend.end(); ++it) {
 		listOfTerritoriesToDefend.push_back(*it);
+		std::cout << *it << std::endl;
 	}
 	return listOfTerritoriesToDefend;
 }
@@ -78,7 +80,7 @@ void Player::issueOrder()
 {	//every time make a new order obj there will be a printout to show it works
 	Order* ord = new Bomb();
 	listOfOrders.push_back(ord);
-
+	std::cout << *ord << std::endl;
 }
 void  Player::print()
 {
