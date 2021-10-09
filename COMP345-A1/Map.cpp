@@ -1,13 +1,12 @@
-//
-// COMP-345 - Group DN15
-// Map implementation
-
+//@see: http://domination.sourceforge.net/makemaps.shtml
 #include "Map.h"
+#include <iostream>		// used for cin & cout
+#include <fstream>		// used for file i/o
+#include <string>
+#include <vector>
 
 using namespace std;
 
-// struct definitions
-// Continent
 Continent::Continent()
 {
     head = nullptr;
@@ -16,100 +15,113 @@ Continent::Continent()
 
 void Continent::Push(Territory* territory)
 {
-    this->head = new ContinentNode{ territory, this->head};
+    ContinentNode* continentNode = new ContinentNode();
+    continentNode->territoryPtr = territory;
+    continentNode->next = this->head;
+    this->head = continentNode;
     this->length++;
+
+    // necessary or is destroying the node just created?
+    delete continentNode;
 }
 
 ContinentNode* Continent::Pop()
 {
-    if(this->head == nullptr) {
+    if (this->head == nullptr) {
+        cout << "nullPtr in pop" << endl;
         return nullptr;
     }
 
     this->length--;
     ContinentNode* tempNode = this->head;
-    head = tempNode->next;
+    this->head = tempNode->next;
     return tempNode;
 }
 
 // class Map 
 // Map Constructor
-Map::Map(int* territories, int territoryCount, int continentCount) 
+Map::Map(MapLoader const* mapLoaderObject, int* territoriesArray)
 {
+//    cout << "Constructor started correctly!" << endl;
     // basic member variable assignment
-    this->territoryCount = territoryCount;
-    this->continentCount = continentCount;
+    this->territoryCount = mapLoaderObject->countryCount;
+    this->continentCount = mapLoaderObject->continentCount;
     this->territoryStartIndex = -1;     // necessary or no?
 
     // initialize Continent array (array of linked lists of type Continent)
     this->continentsArray = new Continent[continentCount];
 
     // loop to create continent linked lists within Continent array
-    for(int i = 0; i < continentCount; i++) {
+    for (int i = 0; i < continentCount; i++) {
         this->continentsArray[i].head = nullptr;
         this->continentsArray[i].length = 0;
+        this->continentsArray[i].armyCount = mapLoaderObject->armies[i];
+        this->continentsArray[i].continentID = i;
+
     }
 
     // initialize Territory array
     this->territoriesArray = new Territory[territoryCount];
 
     // loop to create Territory linked list within continent lists
-    for(int i = 0; i < territoryCount; i++) {
+    // std::map<string, int> territoryTemp;
+    string continentNameTemp, countryNameTemp;
+    for (int i = 0; i < territoryCount; i++) {
         this->territoriesArray[i].head = nullptr;
         this->territoriesArray[i].continentID = continentsArray[i].continentID;     // is this right??
         this->territoriesArray[i].territoryID = i;
-        this->territoriesArray[i].armyCount = new int[continentsArray[i].armyCount];    // is this right??
-
-        // append territories to their corresponding continent list
-        // something is wrong below
-        this->continentsArray[this->territoriesArray[i]].head = new ContinentNode{&this->territoriesArray[i], continentsArray[territoriesArray[i]].head};
+    //     // append territories to their corresponding continent list
+    //     // something is wrong below
+        ContinentNode* cNode = new ContinentNode();
+        cNode->territoryPtr = &this->territoriesArray[i];
+        cNode->next = continentsArray[territoriesArray[i]].head;
+        continentsArray[territoriesArray[i]].head = new ContinentNode();
+        continentsArray[territoriesArray[i]].head->territoryPtr = &this->territoriesArray[i];
+        // continentsArray[territoriesArray[i]].head;
         this->continentsArray[territoriesArray[i]].length++;
-    
-    }
 
+    }
+//    cout << "Constructor finished correctly!" << endl;
 }
 
 // Map Copy Constructor
 Map::Map(Map* map)
 {
     // basic member variable assignment
-    this->territoryCount = territoryCount;
-    this->continentCount = continentCount;
+    this->territoryCount = map->territoryCount;
+    this->continentCount = map->continentCount;
     this->territoryStartIndex = -1;     // necessary or no?
 
     // initialize Continent array (array of linked lists of type Continent)
     this->continentsArray = new Continent[continentCount];
 
     // loop to create continent linked lists within Continent array
-    for(int i = 0; i < continentCount; i++) {
+    for (int i = 0; i < continentCount; i++) {
         this->continentsArray[i].head = nullptr;
         this->continentsArray[i].length = 0;
     }
-
 }
 
 // Map Destructor
 Map::~Map()
 {
     // iterate over territories of map to delete map edges
-    for (int i = 0; i < territoryCount; i++ ) {
+    for (int i = 0; i < territoryCount; i++) {
         Edge* current = territoriesArray[i].head;
-        while(current != nullptr) {
+        while (current != nullptr) {
             Edge* temp = current->next;
             delete current;
             current = temp;
         }
-
-        delete[] territoriesArray[i].armyCount;
     }
 
     delete[] territoriesArray;
     territoriesArray = nullptr;
 
-    for(int i = 0; i < continentCount; i++) {
+    for (int i = 0; i < continentCount; i++) {
         Continent* current = &continentsArray[i];
         ContinentNode* node = current->head;
-        while(node != nullptr) {
+        while (node != nullptr) {
             ContinentNode* temp = node->next;
             delete node;
             node = temp;
@@ -127,13 +139,18 @@ bool Map::validate()
     // check continents are connected subgraphs
     // check each country belongs to only one continent
 
+    cout << "inside validate()" << endl;
     ////// STEP 1 //////
     // Check ALL Nodes are Connected -> Connected Graph Check
 
     // if number of connected nodes does not match expected amount, print statement and return false
-    int territoryCheck = breadthFirstSearch();
-    if(territoryCount != territoryCheck) {
-        cout << "Invalid Map Detected!\n Territorities not connected!\n" << "Expected to have " << territoryCount << " nodes connected, but instead detected " << territoryCheck << " nodes connected.";
+//    int territoryCheck = new int();
+//    Continent* cont = new Continent;
+    int bfsVar = 0;
+    int territoryCheck = this->breadthFirstSearch(bfsVar);
+    cout << "territoryCheck = " << territoryCheck << endl;
+    if (territoryCount != territoryCheck) {
+        cout << "Invalid Map Detected!\nTerritorities not connected!\n" << "Expected to have " << territoryCount << " nodes connected, but instead detected " << territoryCheck << " nodes connected.";
         return false;
     }
 
@@ -145,42 +162,42 @@ bool Map::validate()
     // loop to check each continent
     int continentCheck;
     int totalTerritoriesCheck = 0;
-    for(int i = 0; i < continentCount; i++) {
+    for (int i = 0; i < continentCount; i++) {
         Continent* continent = &continentsArray[i];
 
         // if number of connected nodes does not match expected amount, print statement and return false
-        continentCheck = breadthFirstSearch(continent);
+        continentCheck = breadthFirstSearch(bfsVar, continent);
         totalTerritoriesCheck += continentCheck;
-        if(continent->length != continentCheck) {
-            cout << "Invalid Map Detected!\n Continents not connected!\n" << "Expected to have " << continentCount << " nodes connected, but instead detected " << continentCheck << " nodes connected.";
+        if (continent->length != continentCheck) {
+            cout << "Invalid Map Detected!\n Continents not connected!\n" << "Expected to have " << continentCount << " nodes connected, but instead detected " << continentCheck << " nodes connected." << endl;
             return false;
         }
     }
 
     // compare total counted Territories in each Continent vs global number of Territories
-    if(totalTerritoriesCheck != territoryCount) {
-        cout << "Invalid Map Detected!\n Some Territories belong to more than one Continent!/n" << "Expected to have " << territoryCount << " nodes connected, but instead detected " << totalTerritoriesCheck << " nodes connected.";
+    if (totalTerritoriesCheck != territoryCount) {
+        cout << "Invalid Map Detected!\n Some Territories belong to more than one Continent!/n" << "Expected to have " << territoryCount << " nodes connected, but instead detected " << totalTerritoriesCheck << " nodes connected." << endl;
         return false;
     }
 
     ////// STEP 3 //////
     // Check Edges for any issues with graph -> ALL Nodes should have at least one incoming and outgoing Edge
     bool incomingEdgeCheck;
-    for(int i = 0; i < territoryCount; i++) {
+    for (int i = 0; i < territoryCount; i++) {
         Edge* outerEdge = territoriesArray[i].head;
-        while(outerEdge != nullptr) {
+        while (outerEdge != nullptr) {
             incomingEdgeCheck = false;
             Edge* incomingEdge = outerEdge->adjTerritoryPtr->head;
-            while(incomingEdge != nullptr) {
-                if(incomingEdge->adjTerritoryPtr->territoryID == territoriesArray[i].territoryID) {
+            while (incomingEdge != nullptr) {
+                if (incomingEdge->adjTerritoryPtr->territoryID == territoriesArray[i].territoryID) {
                     incomingEdgeCheck = true;
                     break;
                 }
                 incomingEdge = incomingEdge->next;
             }
-            if(incomingEdgeCheck == false) {
-                cout << "Invalid Map Detected!/n Territory " << i << " has outgoing edge to Territory " 
-                << outerEdge->adjTerritoryPtr->territoryID << " but no incoming edge.\n";
+            if (incomingEdgeCheck == false) {
+                cout << "Invalid Map Detected!/n Territory " << i << " has outgoing edge to Territory "
+                    << outerEdge->adjTerritoryPtr->territoryID << " but no incoming edge.\n";
                 return false;
             }
             outerEdge = outerEdge->next;
@@ -192,229 +209,373 @@ bool Map::validate()
     return true;
 };
 
-int Map::breadthFirstSearch(Continent* continentToCheck) 
-{
+void Map::AddEdge(int origin, int destination) {
+    //Check for valid indexes
+    if (origin < 0 || origin >= territoryCount) {
+        cout << "WARNING: Error on adding edge (" << origin << "," << destination << "): origin territory index " << origin << " out of range. Edge not added.\n";
+        return;
+    }
+    else if (destination < 0 || destination >= territoryCount) {
+        cout << "WARNING: Error on adding edge(" << origin << ", " << destination << ") : destination territory index " << destination << " out of range. Edge not added.\n";
+        return;
+    }
+    //Check if self-loop
+    else if (origin == destination) {
+        cout << "WARNING: Error on adding edge(" << origin << ", " << destination << ") : self-looping is forbidden. Edge not added.\n";
+        return;
+    }
+    //Check if edge is already defined, if yes then do not add the edge
+    Edge* temp = territoriesArray[origin].head;
+    while (temp != nullptr) {
+        if (temp->adjTerritoryPtr->territoryID == destination) {
+            cout << "Skipped creation of edge (" << origin << "," << destination << "), edge already exists." << endl;
+            return;
+        }
+        temp = temp->next;
+    }
 
+    territoriesArray[origin].head = new Edge{ getTerritory(destination), territoriesArray[origin].head };
+    territoriesArray[destination].head = new Edge{ getTerritory(origin), territoriesArray[destination].head };
+}
+
+Territory* Map::getTerritory(int territoryIndex) {
+    if (territoryIndex < 0 || territoryIndex >= territoryCount) {
+        cout << "ERROR: Failure to fetch territory at index " << territoryIndex << ", index is out of range." << endl;
+        return nullptr;
+    }
+    return &territoriesArray[territoryIndex];
+}
+
+int Map::breadthFirstSearch(int bfs, Continent* continentToCheck)
+{
+    
+    cout << "inside BFS()" << endl;
+    
     bool continentCheck = false;
-    Continent *visitedNodesQueue = new Continent();
+    Continent* visitedNodesQueue = new Continent();
     // Continent visitedNodesQueue;
     // check if passed continentToCheck = 0
     // if continentToCheck != 0 -> will check for connected subgraph
     // else will check for connected graph of all nodes
     // -> create appropriate type of queue
-    if(continentToCheck != 0) {
+    if (continentToCheck != 0) {
         continentCheck = true;
-        if(continentToCheck->head == nullptr) {
-            return 0;
-        } else {
+        if (continentToCheck->head == nullptr) {
+            cout << "continentToCheck->head == nullptr" << endl;
+            int retVal{0};
+            return retVal;
+        }
+        else {
+            cout << "continent BFS" << endl;
             visitedNodesQueue->Push(continentToCheck->head->territoryPtr);
         }
-    } else {
-        visitedNodesQueue->Push(&territoriesArray[0]);
     }
-
+    else {
+        Territory *terr;
+//        terr = territoriesArray[0];
+//        cout << "territory BFS" << endl;
+        visitedNodesQueue->Push(terr);
+    }
+    
     // create array of bools to check territories one by one
     bool* visitedNodes = new bool[territoryCount];
     visitedNodes[0] = true;
+    int nodeCount = 0;
     // loop to init each bool in array to false
-    for(int i = 1; i < territoryCount; i++) {
+    for (int i = 1; i < territoryCount; i++) {
+//        cout << "i = " << i << endl;
         visitedNodes[i] = false;
+        nodeCount++;
     }
-
-    int visitedNodesCount = 1;
     bool accepted = false;
 
-    while(visitedNodesQueue->length > 0) {
-        visitedNodesCount++;
+    int visitedNodesLoop = 0;
+//    while (visitedNodes->length ) {
+    for(int i = 0; i < nodeCount; i++) {
+        
+        this->visitedNodesCount++;
         ContinentNode* currentNode = visitedNodesQueue->Pop();
+//        if(currentNode == nullptr) cout << "currentNode = nullptr" << endl;
         Edge* outerEdge = currentNode->territoryPtr->head;
-
-        while(outerEdge != nullptr) {
-            if(visitedNodes[outerEdge->adjTerritoryPtr->territoryID == false]) {
+        
+        while (outerEdge != nullptr) {
+            visitedNodesLoop++;
+            if (visitedNodes[outerEdge->adjTerritoryPtr->territoryID == false]) {
                 accepted = true;
-                if(continentCheck) {
-                    if(outerEdge->adjTerritoryPtr->continentID != currentNode->territoryPtr->continentID) {
+                if (continentCheck) {
+                    if (outerEdge->adjTerritoryPtr->continentID != currentNode->territoryPtr->continentID) {
                         accepted = false;
                     }
                 }
             }
 
-            if(accepted) {
+            if (accepted) {
                 visitedNodesQueue->Push(outerEdge->adjTerritoryPtr);
                 visitedNodes[outerEdge->adjTerritoryPtr->territoryID] = true;
             }
 
             outerEdge = outerEdge->next;
         }
-        delete currentNode;
+//        delete currentNode;
     }
+    cout << "visited nodes = " << visitedNodesLoop << endl;
+    
+//    int value{visitedNodesCount};
+    bfs = visitedNodesCount;
+    
     delete visitedNodesQueue;
     delete[] visitedNodes;
-    return visitedNodesCount;
+    return bfs;
 }
 
-// void Map::displayAdjacentNodes(Territory territory)
-// {
-//     Edge* nodePtr = territoriesArray[territory.territoryID].head;
-
-//     while(nodePtr != nullptr) {
-        
-//     }
-// }
-
-//////////////////////////////
-
-// class MapLoader
-// MapLoader Constructor
-MapLoader::MapLoader(string fileName)
+int* MapLoader::getCountryArray()
 {
-    this->index = 0;
-    this->tempVar = 0;
-    this->players = 0;
-    this->continents = 0;
-    this->territoryCount = 0;
+    return this->countryIn;
+}
+
+string* MapLoader::getContinentIDArray()
+{
+    return this->countryName;
+}
+
+void Map::transferTerritories(string* territoryNames, int* continentIDs)
+{
+    this->territoriesArray = new Territory[territoryCount];
     
-    inputFile.open(fileName);           // open file stream
+    for(int i = 0; i < territoryCount; i++) {
+        this->territoriesArray[i].continentID = continentIDs[i];
+        this->territoriesArray[i].territoryID = i;
+        this->territoriesArray[i].territoryName = territoryNames[i];
+    
+    
+        Edge* edge = this->territoriesArray[i].head;
+        
+        if(edge != nullptr) {
+            Edge* previous = this->territoriesArray[i].head = new Edge{&territoriesArray[edge->adjTerritoryPtr->territoryID], nullptr};
+            
+            edge = edge->next;
+            
+            while(edge != nullptr) {
+                previous->next = new Edge{&territoriesArray[edge->adjTerritoryPtr->territoryID]};
+                edge = edge->next;
+                previous = previous->next;
+            }
+            previous->next = nullptr;
+        }
+        
+        this->continentsArray[this->territoriesArray[i].continentID].head = new ContinentNode{&this->territoriesArray[i], continentsArray[this->territoriesArray[i].continentID].head};
+        this->continentsArray[this->territoriesArray[i].continentID].length++;
+    }
+}
 
+MapLoader::MapLoader() {
+    line = "";
+    userIn = "";
+    continentCount = 0;
+    countryCount = 0;
+    count = 0;
+}
 
-    // determine number of players from file
+MapLoader::MapLoader(string filename) {
+    line = "";
+    userIn = filename;
+    continentCount = 0;
+    countryCount = 0;
+    count = 0;
+}
 
-    // inputFile.close();                  // close file stream
-
-};
-
-MapLoader::MapLoader()
+void MapLoader::readFile()
 {
-    this->index = 0;
-    this->tempVar = 0;
-    this->players = 0;
-    this->continents = 0;
-    this->territoryCount = 0;
+    // Scan the whole file once to record number of continents and countries
+    inputFile.open(userIn);        // Open stream file
 
-    this->fileName = "";
-    this->fileStream = "";
-    this->inputLine = "";
-
-    cout << "Please input file name..." << endl;
-};
-
-MapLoader::~MapLoader()
-{
-    delete[] territories;
-};
-
-void MapLoader::readContinents()
-{
-
-};
-
-void MapLoader::readTerritories()
-{
-
-};
-
-void MapLoader::readBorder()
-{
-
-};
-
-void MapLoader::buildMap()
-{
-
-};
-
-void MapLoader::readFile(string fileName)
-{
-    inputFile.open(fileName); 
-    // inputFile.open(".\\Maps\\" + userIn);        // Open stream file
+    cout << "begin reading file" << endl;
+    
+    if (!inputFile) cerr << "Could not open the file!" << endl;
+    else cout << "file opened successfully" << endl;
+    
     if (inputFile.is_open())
     {
-        int data, armies, countryNumber, continentNumber, continentCount = 0, countryCount = 0;
-        string line, continentName, countryName;
-        while(inputFile >> data)
-        {
-            // read line
-            getline(inputFile, line);
-            // check if first character is ';' -> if so, skip line
-            if(line[0] == ';') {
-                // should skip this whole line
-                inputFile.ignore(1, '\n');
-
-            // check if first character is '[' - > if so, indicates a new section
-            } else if(line[0] == '[') {
-
-                // check if second character is 'f' -> if so, ignore line
-                if(line[1] == 'f') {
-                    // should skip this whole line
-                    inputFile.ignore(1, '\n');
-
-                // else -> marks the start of important section
-                } else {
-                    // check if fourth character is 'n' -> if so, indicates beginning of Continents section
-                    if(line[3] == 'n') {
-                        // go to next line
-                        inputFile.ignore(1, '\n');
-                        // begin looping to read continents
-                        while(line[0] != ' ') {
-                            // loop line looking for space
-                            for(int i = 0; i < line.length(); i++) {
-                                if(line[i] == ' ') {
-                                    // assign name of continent
-                                    continentName = line.substr(0, i-1);
-                                    // assign army count
-                                    armies = line[i+1];
-                                    break;
-                                }
-                            }
-
-                            cout << "continent obtained! name = " << continentName << " and army count = " << armies;
-
-                            // add continent info to map
-                            // should we just call constructor on it and add the object instead?
-                            continentCount++;
-                            continentsMap.insert(make_pair(continentCount, map<string, int>()));
-                            continentsMap[continentCount].insert(make_pair(continentName, armies));
-                            inputFile.ignore(1, '\n');
-
-                            // read new line
-                            getline(inputFile, line);
-                        }
-                    // else -> indicates beginning of Countries section
-                    } else {
-                        // go to next line
-                        inputFile.ignore(1, '\n');
-                        // begin looping to read countries
-                        while(line[0] != ' ') {
-                            // get countryID
-                            countryNumber = line[0];
-
-                            // loop line looking for space
-                            for(int i = 2; i < line.length(); i++) {
-                                if(line[i] == ' ') {
-                                    // assign name of country
-                                    countryName = line.substr(2, i-1);
-                                    // assign army count
-                                    continentNumber = line[i+1];
-                                    break;
-                                }
-                            }
-
-                            cout << "country obtained! name = " << countryName << " and it belongs to continent " << continentNumber;
-
-                            // add continent to map
-                            // should we just call constructor on it and add the object instead?
-                            countryCount++;
-                            countriesMap.insert(make_pair(countryCount, map<string, int>()));
-                            countriesMap[countryCount].insert(make_pair(countryName, continentNumber));
-                            inputFile.ignore(1, '\n');
-
-                            // read new line
-                            getline(inputFile, line);
-                        }
+        cout << "check!!!" << endl;
+        while (getline(inputFile, line)) {
+            if (line[0] == '[') {
+                // to identify continents tag
+                if (line[3] == 'n') {
+                    getline(inputFile, line); // to skip tag
+                    while (line.length() > 2) {
+                        continentCount++;
+                        getline(inputFile, line);
+                    }
+                }
+                // to identify countries tag
+                else if(line[3] == 'u') {
+                    getline(inputFile, line); // to skip tag
+                    while (line.length() > 2) {
+                        countryCount++;
+                        getline(inputFile, line);
                     }
                 }
             }
         }
-        inputFile.close();
+    }
+    inputFile.close();
+
+    // Initialize all arrays to start storing map details
+    continentName = new string[continentCount];
+    countryName = new string[countryCount];
+    armies = new int[continentCount];
+    countryIn = new int[countryCount];
+    borders = new string[countryCount];
+    
+    // Scan file and record data
+    inputFile.open(userIn);        // Open stream file
+
+    if (inputFile.is_open())
+    {
+        while (getline(inputFile, line))
+        {
+            if (line[0] == '[') {
+                // to identify [file] label
+                if (line[1] == 'f') {
+
+                    // to skip label line
+                    cout << "SKIPPED: " << line << "\n";
+                    getline(inputFile, line);
+
+                    // to skip [file] lines
+                    while (line.length() > 2) {
+                        cout << "SKIPPED: " << line << "\n";
+                        getline(inputFile, line);
+                    }
+                }
+
+                // to store [continents]
+                else if (line[3] == 'n') {
+
+                    // to skip label line
+                    cout << endl;
+                    cout << "SKIPPED: " << line << "\n";
+                    getline(inputFile, line);
+
+                    // to store continents
+                    while (line.length() > 2) {
+                        cout << "CONTINENT: " << line << "\n";
+                        for (size_t i = 0; i < line.length(); i++) {
+                            if (line[i] == ' ') {
+                                // assign name of continent
+                                continentName[count] = line.substr(0, i);
+                                cout << "This is what I get for continentName: \"" << continentName[count] << "\"" << endl;
+                                // assign army count
+                                armies[count] = line[i + 1] - 48; // -48 to convert from ASCII to (int)
+                                cout << "This is what I get for armies: \"" << armies[count] << "\"" << endl;
+                                count++;
+                                break;
+                            }
+                        }
+                        getline(inputFile, line);
+                    }
+                }
+
+                // to store [countries]
+                else if (line[3] == 'u') {
+
+                    // to skip label line
+                    cout << endl;
+                    cout << "SKIPPED: " << line << "\n";
+                    getline(inputFile, line);
+                    count = 0; // reset counter
+
+                    // to store countries
+                    while (line.length() > 2) {
+                        cout << "COUNTRY: " << line << "\n";
+                        for (size_t i = 0; i < line.length(); i++) {
+                            if (line[i] == ' ') {
+                                i++;
+                                for (size_t j = i; j < line.length(); j++) {
+                                    if (line[j] == ' ') {
+                                        // assign name of countries
+                                        // something about the next line makes me do "j-3", but why?
+                                        countryName[count] = line.substr(i, j-3);
+                                        cout << "This is what I get for countryName: \"" << countryName[count] << "\"" << endl;
+                                        // assign cotinent each country belongs to
+                                        // at some point the the number will be a double digit, what do?
+                                        countryIn[count] = line[j + 1] - 48; // -48 to convert from ASCII to (int)
+                                        cout << "This is what I get for countryIn: \"" << countryIn[count] << "\"" << endl;
+                                        count++;
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        getline(inputFile, line);
+                    }
+                }
+
+                // to store [borders]
+                else if (line[1] == 'b') {
+
+                    // to skip label line
+                    cout << endl;
+                    cout << "SKIPPED: " << line << "\n";
+                    getline(inputFile, line);
+                    count = 0; // reset counter
+
+                    // to store borders
+                    while (line.length() > 2) {
+                        cout << "BORDERS: " << line << "\n";
+
+                        for (size_t i = 0; i < line.length(); i++) {
+                            if (line[i] == ' ') {
+                                // assign name of continent
+                                i++;
+                                borders[count] = line.substr(i, line.length());
+                                cout << "This is what I get for borders: \"" << borders[count] << "\"" << endl;
+                                count++;
+                                break;
+                            }
+                        }
+                        getline(inputFile, line);
+                    }
+                }
+            }
+        }
+    }
+    inputFile.close();
+
+    //delete[] continentName;
+    //delete[] countryName;
+    //delete[] armies;
+    //delete[] countryIn;
+    //delete[] borders;
+}
+
+void MapLoader::makeConnections(Map* userMap) {
+    string line;
+    string subLine;
+    int origin;
+    int dest ;
+    int count = 0;
+    int h;
+    // To establish connection between countries
+    for (size_t i = 0; i < borders->length(); i++) {
+        line = borders[i];
+        for (size_t j = 0; j < borders[i].length(); j++) {
+            h = j;
+            while (line[h] != ' ') {
+                count++;
+                h++;
+                if (count == 2) break;
+            }
+            origin = i + 1;
+            subLine = line.substr(j, count);
+            dest = stoi(subLine);
+            userMap->AddEdge(origin, dest);
+            j += count;
+            count = 0;
+            if (j - 1 == borders->length()) break;
+        }
     }
 }
+
+
