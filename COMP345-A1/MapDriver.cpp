@@ -4,11 +4,19 @@
 
 using namespace std;
 
-int main()
-{
+//int main()
+//{
+//    cout << "starting program" << endl;
+//    MapLoader* testObject = new MapLoader("WoW.map");
+//    delete testObject;
+//
+//    return 0;
+//}
+
+void testMap() {
+
     cout << "starting program" << endl;
     MapLoader* testObject = new MapLoader("WoW.map");
     delete testObject;
 
-    return 0;
 }
