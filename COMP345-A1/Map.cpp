@@ -272,7 +272,7 @@ int Map::breadthFirstSearch(int bfs, Continent* continentToCheck)
     }
     else {
         Territory *terr;
-//        terr = territoriesArray[0];
+        terr = &territoriesArray[0];
 //        cout << "territory BFS" << endl;
         visitedNodesQueue->Push(terr);
     }
@@ -387,7 +387,7 @@ MapLoader::MapLoader(string filename) {
 void MapLoader::readFile()
 {
     // Scan the whole file once to record number of continents and countries
-    inputFile.open(userIn);        // Open stream file
+    inputFile.open(".\\maps\\" + userIn);        // Open stream file
 
     cout << "begin reading file" << endl;
     
@@ -428,7 +428,7 @@ void MapLoader::readFile()
     borders = new string[countryCount];
     
     // Scan file and record data
-    inputFile.open(userIn);        // Open stream file
+    inputFile.open(".\\maps\\" + userIn);        // Open stream file
 
     if (inputFile.is_open())
     {

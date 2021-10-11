@@ -77,5 +77,8 @@
     <ClInclude Include="CardsDriver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MapDriver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

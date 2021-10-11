@@ -76,6 +76,7 @@ void testGameEngine()
 
 	// delete gameEngine that was created
 	delete gameEngine;
+	gameEngine = nullptr;
 }
 
 
