@@ -3,7 +3,7 @@
 #include <iostream>		// used for cin & cout
 #include <fstream>		// used for file i/o
 #include <string>
-#include <vector>
+//#include <vector>
 
 using namespace std;
 
@@ -15,34 +15,33 @@ Continent::Continent()
 
 void Continent::Push(Territory* territory)
 {
-    ContinentNode* continentNode = new ContinentNode();
-    continentNode->territoryPtr = territory;
-    continentNode->next = this->head;
-    this->head = continentNode;
+//    ContinentNode* continentNode = new ContinentNode();
+//    continentNode->territoryPtr = territory;
+//
+//    continentNode->next = this->head;
+//    this->head = continentNode;
+//    this->length++;
+//    if(continentNode->next == nullptr) cout << "cont next == nullptr" << endl;
+//    // necessary or is destroying the node just created?
+////    delete continentNode;
+    
+    this->head = new ContinentNode{territory, this->head};
     this->length++;
-
-    // necessary or is destroying the node just created?
-    delete continentNode;
 }
 
 ContinentNode* Continent::Pop()
 {
-    if (this->head == nullptr) {
-        cout << "nullPtr in pop" << endl;
-        return nullptr;
-    }
-
+    
     this->length--;
     ContinentNode* tempNode = this->head;
-    this->head = tempNode->next;
+    head = tempNode->next;
     return tempNode;
 }
 
 // class Map 
 // Map Constructor
-Map::Map(MapLoader const* mapLoaderObject, int* territoriesArray)
+Map::Map(MapLoader* mapLoaderObject)
 {
-//    cout << "Constructor started correctly!" << endl;
     // basic member variable assignment
     this->territoryCount = mapLoaderObject->countryCount;
     this->continentCount = mapLoaderObject->continentCount;
@@ -62,10 +61,10 @@ Map::Map(MapLoader const* mapLoaderObject, int* territoriesArray)
 
     // initialize Territory array
     this->territoriesArray = new Territory[territoryCount];
+    
+    transferTerritories(territoriesArray, mapLoaderObject->getContinentIDArray(), mapLoaderObject->getCountryArray());
 
     // loop to create Territory linked list within continent lists
-    // std::map<string, int> territoryTemp;
-    string continentNameTemp, countryNameTemp;
     for (int i = 0; i < territoryCount; i++) {
         this->territoriesArray[i].head = nullptr;
         this->territoriesArray[i].continentID = continentsArray[i].continentID;     // is this right??
@@ -74,14 +73,28 @@ Map::Map(MapLoader const* mapLoaderObject, int* territoriesArray)
     //     // something is wrong below
         ContinentNode* cNode = new ContinentNode();
         cNode->territoryPtr = &this->territoriesArray[i];
-        cNode->next = continentsArray[territoriesArray[i]].head;
-        continentsArray[territoriesArray[i]].head = new ContinentNode();
-        continentsArray[territoriesArray[i]].head->territoryPtr = &this->territoriesArray[i];
+        cNode->next = continentsArray[territoriesArray[i].continentID].head;
+        continentsArray[territoriesArray[i].continentID].head = new ContinentNode();
+        continentsArray[territoriesArray[i].continentID].head->territoryPtr = &this->territoriesArray[i];
         // continentsArray[territoriesArray[i]].head;
-        this->continentsArray[territoriesArray[i]].length++;
+        this->continentsArray[territoriesArray[i].continentID].length++;
 
+        
+        Edge* edge = this->territoriesArray[i].head;
+        if(edge != nullptr) {
+            Edge* prev = this->territoriesArray[i].head = new Edge{&territoriesArray[edge->adjTerritoryPtr->territoryID], nullptr};
+            edge = edge->next;
+            
+            while(edge != nullptr) {
+                prev->next = new Edge{&territoriesArray[edge->adjTerritoryPtr->territoryID]};
+                edge = edge->next;
+                prev = prev->next;
+            }
+            prev->next = nullptr;
+        }
+        this->continentsArray[this->territoriesArray[i].continentID].head = new ContinentNode {&this->territoriesArray[i], continentsArray[this->territoriesArray[i].continentID].head};
+        this->continentsArray[this->territoriesArray[i].continentID].length++;
     }
-//    cout << "Constructor finished correctly!" << endl;
 }
 
 // Map Copy Constructor
@@ -139,7 +152,6 @@ bool Map::validate()
     // check continents are connected subgraphs
     // check each country belongs to only one continent
 
-    cout << "inside validate()" << endl;
     ////// STEP 1 //////
     // Check ALL Nodes are Connected -> Connected Graph Check
 
@@ -148,10 +160,12 @@ bool Map::validate()
 //    Continent* cont = new Continent;
     int bfsVar = 0;
     int territoryCheck = this->breadthFirstSearch(bfsVar);
-    cout << "territoryCheck = " << territoryCheck << endl;
+//    int territoryCheck = this->territoryNodeCount();
     if (territoryCount != territoryCheck) {
-        cout << "Invalid Map Detected!\nTerritorities not connected!\n" << "Expected to have " << territoryCount << " nodes connected, but instead detected " << territoryCheck << " nodes connected.";
+        cout << "Invalid Map Detected!\nTerritorities not connected!\n" << "Expected to have " << territoryCount << " nodes connected, but instead detected " << territoryCheck << " nodes connected." << endl;
         return false;
+    } else {
+        cout << "Territories are correctly connected!" << endl;
     }
 
     ////// STEP 2 //////
@@ -166,11 +180,14 @@ bool Map::validate()
         Continent* continent = &continentsArray[i];
 
         // if number of connected nodes does not match expected amount, print statement and return false
-        continentCheck = breadthFirstSearch(bfsVar, continent);
+//        continentCheck = breadthFirstSearch(bfsVar, continent);
+        continentCheck = continentNodeCount(continent);
         totalTerritoriesCheck += continentCheck;
         if (continent->length != continentCheck) {
-            cout << "Invalid Map Detected!\n Continents not connected!\n" << "Expected to have " << continentCount << " nodes connected, but instead detected " << continentCheck << " nodes connected." << endl;
+            cout << "Invalid Map Detected!\n Continents not connected!\n" << "Expected to have " << continent->length << " nodes connected, but instead detected " << continentCheck << " nodes connected." << endl;
             return false;
+        } else {
+            cout << "Continents are correctly connected!" << endl;
         }
     }
 
@@ -238,6 +255,11 @@ void Map::AddEdge(int origin, int destination) {
     territoriesArray[destination].head = new Edge{ getTerritory(origin), territoriesArray[destination].head };
 }
 
+Territory* Map::getTerritoriesArray()
+{
+    return territoriesArray;
+}
+
 Territory* Map::getTerritory(int territoryIndex) {
     if (territoryIndex < 0 || territoryIndex >= territoryCount) {
         cout << "ERROR: Failure to fetch territory at index " << territoryIndex << ", index is out of range." << endl;
@@ -248,9 +270,7 @@ Territory* Map::getTerritory(int territoryIndex) {
 
 int Map::breadthFirstSearch(int bfs, Continent* continentToCheck)
 {
-    
-    cout << "inside BFS()" << endl;
-    
+        
     bool continentCheck = false;
     Continent* visitedNodesQueue = new Continent();
     // Continent visitedNodesQueue;
@@ -261,49 +281,59 @@ int Map::breadthFirstSearch(int bfs, Continent* continentToCheck)
     if (continentToCheck != 0) {
         continentCheck = true;
         if (continentToCheck->head == nullptr) {
-            cout << "continentToCheck->head == nullptr" << endl;
             int retVal{0};
             return retVal;
         }
         else {
-            cout << "continent BFS" << endl;
             visitedNodesQueue->Push(continentToCheck->head->territoryPtr);
         }
     }
     else {
-        Territory *terr;
+        Territory *terr = new Territory;
         terr = &territoriesArray[0];
-//        cout << "territory BFS" << endl;
+
         visitedNodesQueue->Push(terr);
     }
     
     // create array of bools to check territories one by one
     bool* visitedNodes = new bool[territoryCount];
     visitedNodes[0] = true;
-    int nodeCount = 0;
+    int nodeCount = 1;
+    Territory *terr = new Territory;
+    Continent *cont = new Continent;
+    if (!continentCheck) {
+    
     // loop to init each bool in array to false
-    for (int i = 1; i < territoryCount; i++) {
-//        cout << "i = " << i << endl;
-        visitedNodes[i] = false;
-        nodeCount++;
+        for (int i = 1; i < territoryCount; i++) {
+            terr = &territoriesArray[i];
+            visitedNodes[i] = false;
+            nodeCount++;
+            visitedNodesQueue->Push(terr);
+        }
+    }
+    else {
+        for (int i = 1; i < continentCount; i++) {
+            cont = &continentsArray[i];
+            visitedNodes[i] = false;
+            nodeCount++;
+        }
     }
     bool accepted = false;
 
     int visitedNodesLoop = 0;
-//    while (visitedNodes->length ) {
+
     for(int i = 0; i < nodeCount; i++) {
-        
         this->visitedNodesCount++;
         ContinentNode* currentNode = visitedNodesQueue->Pop();
-//        if(currentNode == nullptr) cout << "currentNode = nullptr" << endl;
+
         Edge* outerEdge = currentNode->territoryPtr->head;
-        
+
         while (outerEdge != nullptr) {
             visitedNodesLoop++;
             if (visitedNodes[outerEdge->adjTerritoryPtr->territoryID == false]) {
                 accepted = true;
                 if (continentCheck) {
-                    if (outerEdge->adjTerritoryPtr->continentID != currentNode->territoryPtr->continentID) {
+                    if(outerEdge->adjTerritoryPtr->continentID != currentNode->territoryPtr->continentID) {
                         accepted = false;
                     }
                 }
@@ -313,19 +343,78 @@ int Map::breadthFirstSearch(int bfs, Continent* continentToCheck)
                 visitedNodesQueue->Push(outerEdge->adjTerritoryPtr);
                 visitedNodes[outerEdge->adjTerritoryPtr->territoryID] = true;
             }
-
             outerEdge = outerEdge->next;
         }
-//        delete currentNode;
     }
-    cout << "visited nodes = " << visitedNodesLoop << endl;
-    
-//    int value{visitedNodesCount};
+
     bfs = visitedNodesCount;
-    
     delete visitedNodesQueue;
     delete[] visitedNodes;
     return bfs;
+}
+
+int Map::territoryNodeCount()
+{
+    bool* checkedNodes = new bool[territoryCount];
+    for(int i = 0; i < territoryCount; i++) {
+        checkedNodes[i] = false;
+    }
+    
+    int checkedCount{0};
+    Continent nodesQueue;
+    nodesQueue.Push(&territoriesArray[0]);
+    checkedNodes[0] = true;
+    
+    while(nodesQueue.length > 0) {
+        checkedCount++;
+        ContinentNode* currentNode = nodesQueue.Pop();
+        Edge* outerEdge = currentNode->territoryPtr->head;
+        while(outerEdge != nullptr) {
+            if(!checkedNodes[outerEdge->adjTerritoryPtr->territoryID]) {
+                nodesQueue.Push(outerEdge->adjTerritoryPtr);
+                checkedNodes[outerEdge->adjTerritoryPtr->territoryID] = true;
+            }
+            outerEdge = outerEdge->next;
+        }
+        delete currentNode;
+    }
+    delete[] checkedNodes;
+    return checkedCount;
+}
+
+int Map::continentNodeCount(Continent *cont)
+{
+    if(cont->head == nullptr) {
+        return 0;
+    }
+    
+    bool* checkedNodes = new bool[territoryCount];
+    for(int i = 0; i < territoryCount; i++) {
+        checkedNodes[i] = false;
+    }
+    
+    int checkedCount{0};
+    Continent* nodesQueue = new Continent();
+    nodesQueue->Push(cont->head->territoryPtr);
+    checkedNodes[cont->head->territoryPtr->territoryID] = true;
+    
+    while(nodesQueue->length > 0) {
+        checkedCount++;
+        ContinentNode* currentNode = nodesQueue->Pop();
+        Edge* outerEdge = currentNode->territoryPtr->head;
+        
+        while(outerEdge != nullptr) {
+            if(!checkedNodes[outerEdge->adjTerritoryPtr->territoryID] and outerEdge->adjTerritoryPtr->continentID == currentNode->territoryPtr->continentID) {
+                nodesQueue->Push(outerEdge->adjTerritoryPtr);
+                checkedNodes[outerEdge->adjTerritoryPtr->territoryID] = true;
+            }
+            outerEdge = outerEdge->next;
+        }
+        delete currentNode;
+    }
+    delete nodesQueue;
+    delete[] checkedNodes;
+    return checkedCount;
 }
 
 int* MapLoader::getCountryArray()
@@ -338,9 +427,9 @@ string* MapLoader::getContinentIDArray()
     return this->countryName;
 }
 
-void Map::transferTerritories(string* territoryNames, int* continentIDs)
+void Map::transferTerritories(Territory* territories, string* territoryNames, int* continentIDs)
 {
-    this->territoriesArray = new Territory[territoryCount];
+//    this->territoriesArray = new Territory[this->territoryCount];
     
     for(int i = 0; i < territoryCount; i++) {
         this->territoriesArray[i].continentID = continentIDs[i];
@@ -382,12 +471,32 @@ MapLoader::MapLoader(string filename) {
     continentCount = 0;
     countryCount = 0;
     count = 0;
+    
+    cout << "Now reading input file" << endl;
+    
+    this->readFile();
+    
+    cout << "Now constructing Map object" << endl;
+    
+    Map* inputMap = new Map(this);
+    
+    cout << "Now validating Map" << endl;
+    
+    inputMap->validate();
+}
+
+MapLoader::~MapLoader()
+{
+    delete[] continentName;
+    delete[] countryName;
+    delete[] armies;
+    delete[] borders;
 }
 
 void MapLoader::readFile()
 {
     // Scan the whole file once to record number of continents and countries
-    inputFile.open(".\\maps\\" + userIn);        // Open stream file
+    inputFile.open(userIn);        // Open stream file
 
     cout << "begin reading file" << endl;
     
@@ -396,7 +505,6 @@ void MapLoader::readFile()
     
     if (inputFile.is_open())
     {
-        cout << "check!!!" << endl;
         while (getline(inputFile, line)) {
             if (line[0] == '[') {
                 // to identify continents tag
@@ -428,7 +536,7 @@ void MapLoader::readFile()
     borders = new string[countryCount];
     
     // Scan file and record data
-    inputFile.open(".\\maps\\" + userIn);        // Open stream file
+    inputFile.open(userIn);        // Open stream file
 
     if (inputFile.is_open())
     {
@@ -576,6 +684,8 @@ void MapLoader::makeConnections(Map* userMap) {
             if (j - 1 == borders->length()) break;
         }
     }
+    
+    for(int i = 0; i < continentCount; i++) {
+        
+    }
 }
-
-
