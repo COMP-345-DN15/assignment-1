@@ -25,10 +25,10 @@ struct Territory {        // The graph’s nodes represents a territory (implement
 };
 
 struct Continent {
+    ContinentNode* head;
     int length;
     int continentID;
     int armyCount;
-    ContinentNode* head;
     Continent();
     void Push(Territory* territory);
     ContinentNode* Pop();
@@ -51,22 +51,26 @@ public:
 
     Territory* getTerritory(int index);
     
-    Map(MapLoader const* mapLoaderObject, int* territoriesArray);   // Parameterized Constructor
+//    Map(MapLoader mapLoaderObject, Territory* territoriesArray);   // Parameterized Constructor
+//    Map(MapLoader mapLoaderObj, string* continentNames, string* countryNames, int* continentIDs, int* armies);
+    Map(MapLoader* mapLoaderObject);
     Map(Map* map);
     ~Map();                                    // Destructor
 
     void AddEdge(int origin, int destination);		// Adds a bi-directional edge from territories[origin] to territories[destination]
 
-    // addNode();
 
     bool validate();                        // returns whether a map is valid or invalid
     int visitedNodesCount;
     
     int breadthFirstSearch(int bfs, Continent* continentToCheck = 0);
 
+    int territoryNodeCount();
+    int continentNodeCount(Continent *cont);
 //    void transferElements(int* integerArray = 0, string* stringArray = 0);
-    void transferTerritories(string* territoryNames, int* continentIDs);
+    void transferTerritories(Territory* territories, string* territoryNames, int* continentIDs);
     
+    Territory* getTerritoriesArray();
 
 private:
 
@@ -79,6 +83,7 @@ public:
 
     MapLoader();            // Default constructor
     MapLoader(string);        // Constructor passing file name
+    ~MapLoader();
     void readFile();        // Read .map file
     void makeConnections(Map* userMap); // Reads details and creates edges
     ifstream inputFile;        // Input stream
