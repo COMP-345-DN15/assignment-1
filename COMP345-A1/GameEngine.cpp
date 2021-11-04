@@ -9,15 +9,37 @@
 
 GameEngine::GameEngine()
 {
-    //constructor
+    // default constructor
 
     currentState = start;
 
 }
 
+GameEngine::GameEngine(const GameEngine& gameEngine)
+{
+    // copy constructor
+
+    currentState = start;
+    cout << "Game engine copied" << endl;
+
+}
+
 GameEngine::~GameEngine()
 {
+    // something here will be a nullptr
     //destructor
+
+}
+
+GameEngine& GameEngine::operator = (const GameEngine& gameEngine) {
+    // stuff to put here
+    return *this;
+}
+
+ostream& operator << (ostream& out, const GameEngine& gameEngine) {
+
+    // stream insertion operator
+    // out << all things  
 
 }
 
@@ -228,48 +250,3 @@ void GameEngine::validateMap() {
     // validate map selected by user
     validateMap(); // need a reference to the map loaded into loadedMap var?
 }
-
-//void GameEngine::addPlayer()
-//{
-//    Player* addPlayer  
-//}
-
-//void GameEngine::assignCountries()
-//{
-//    Player* assignCountries = 
-//}
-
-//void GameEngine::issueOrder()
-//{
-//    
-//}
-
-//void GameEngine::endIssueOrders()
-//{
-//    
-//}
-
-//void GameEngine::execOrder()
-//{
-//   
-//}
-
-//void GameEngine::endExecOrders()
-//{
-//    
-//}
-
-//void GameEngine::winGame()
-//{
-//    
-//}
-
-//void GameEngine::endGame()
-//{
-//    
-//}
-
-//void GameEngine::start()
-//{
-//    
-//}

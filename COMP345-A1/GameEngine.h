@@ -28,8 +28,17 @@ private:
 // public members
 public:
 
+	// constructors, assignment operator, destructor
 	GameEngine(); // constructor for the GameEngine
+	GameEngine(const GameEngine& args) {
+		cout << "Copy constructor called" << endl;
+	} // copy constructor for GameEngine
+	GameEngine& operator = (const GameEngine& args) {
+		cout << "Assignment operator called" << endl;
+		return *this;
+	} // assignment operator for GameEngine
 	~GameEngine(); // destructor for the GameEngine
+	
 	void sendCommand(GameEngineCommand command);
 	void validateMap();
 
