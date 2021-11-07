@@ -4,17 +4,14 @@
 * It adapts a readCommand
 */
 
-#include "FileCommandProcessor.h"
+#include "FileLineReader.h"
 #include "CommandProcessor.h"
+#include "FileCommandProcessorAdapter.h"
 
-class FileCommandProcessorAdapter : public FileCommandProcessor {
-private:
- CommandProcessor commandProcessor;
-public:
-      FileCommandProcessorAdapter(CommandProcessor cp) {
-           commandProcessor = cp;
-    }
-     void readCommand(string str) {
-          commandProcessor.readCommand(str); // something is wrong about this (maybe)
-    }
+FileCommandProcessorAdapter::FileCommandProcessorAdapter() {
+    //noop
+}
+
+void FileCommandProcessorAdapter::readCommand(string command) {
+    //command = fileLineReader.readLinesFromFile;
 }

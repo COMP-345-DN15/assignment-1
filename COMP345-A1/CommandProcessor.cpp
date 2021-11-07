@@ -1,77 +1,98 @@
-#include <list>
 #include "CommandProcessor.h"
+#include <vector>
 
 using namespace std;
 
-CommandProcessor::CommandProcessor()
+Command::Command(string name, string effect)
 {
-    // default constructor
+	this->name = name;
+	this->effect = effect;
+}
+
+Command::~Command()
+{
 
 }
 
-CommandProcessor::CommandProcessor(const CommandProcessor& commandProcessor)
+CommandProcessor::CommandProcessor()
 {
-    // copy constructor
+     
+	/* Create a list of all valid commands that can be played. */
 
+	//validCommands = new vector<Command>();
+
+	validCommands.push_back(Command("loadMap", "TODO"));
+	validCommands.push_back(Command("validateMap", "TODO"));
+	validCommands.push_back(Command("addPlayer", "TODO"));
+	validCommands.push_back(Command("assignCountries", "TODO"));
+	validCommands.push_back(Command("issueOrder", "TODO"));
+	validCommands.push_back(Command("endIssueOrders", "TODO"));
+	validCommands.push_back(Command("execOrder", "TODO"));
+	validCommands.push_back(Command("endExecOrders", "TODO"));
+	validCommands.push_back(Command("winGame", "TODO"));
+	validCommands.push_back(Command("endGame", "TODO"));
+	validCommands.push_back(Command("playGame", "TODO"));
 
 }
 
 CommandProcessor::~CommandProcessor()
 {
-    // something here will be a nullptr
-    //destructor
-
+	//delete validCommands;
+	//free each command in the validCommands vector
 }
 
-CommandProcessor& CommandProcessor::operator = (const CommandProcessor& commandProcessor) {
-    // stuff to put here
-    return *this;
+/*
+* The GameEngine calls this function to get the next commands to act on.
+*/
+Command CommandProcessor::getCommand() {
+
+    /* Get a command from the console or a file. */
+
+    Command nextCommand = readCommand();
+
+    /* Save the command to the list of commands. */
+
+    saveCommand(nextCommand);
+
+    return nextCommand;
 }
 
-ostream& operator << (ostream& out, const CommandProcessor& commandProcessor) {
-
-    // stream insertion operator
-    // out << all things  
-
-}
-
-class CommandProcessor {
-    
-};
-
-
-
-Command::Command()
+/*
+* Save the command to the commands list.
+*/
+void CommandProcessor::saveCommand(Command command)
 {
-    // default constructor
-                    
+    commands.push_back(command);
 }
 
-Command::Command(const Command& gameEngine)
+Command CommandProcessor::getCommandFromString(string commandInput)
 {
-    // copy constructor
+	for (int i = 0; i < validCommands.size(); i++) {
+		if (commandInput.compare(validCommands[i].name) == 0)
+			return validCommands[i];
+	}
 
+	return Command("invalid", "invalid");
 }
 
-Command::~Command()
-{
-    // something here will be a nullptr
-    //destructor
+/*
+* Return the next command, either from a text from or from the keyboard.
+*/
+Command CommandProcessor::readCommand() {
 
+	//for now we are only reading the commands from the keyboard.
+	//this function needs to be adapted to read the commands from the file with the FLR.
+
+	/* Read command from keyboard. */
+
+	Command nextCommand = Command("invalid", "invalid");
+
+	do {
+		cout << "Enter the next command: " << endl;
+		string userInput;
+		cin >> userInput;
+		nextCommand = getCommandFromString(userInput);
+	} while (nextCommand.name.compare("invalid") == 0);
+
+	return nextCommand;
 }
-
-Command& Command::operator = (const Command& command) {
-    // stuff to put here
-    return *this;
-}
-
-ostream& operator << (ostream& out, const Command& command) {
-
-    // stream insertion operator
-    // out << all things  
-
-}
-
-class Command {
-
-};

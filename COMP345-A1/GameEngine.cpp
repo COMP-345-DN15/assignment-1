@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include "CommandProcessor.h"
 
 // Final names of other .h files TBD
 // #include "Player.h"
@@ -12,17 +13,19 @@ GameEngine::GameEngine()
     // default constructor
 
     currentState = start;
-
+    commandProcessor = CommandProcessor();
 }
 
-GameEngine::GameEngine(const GameEngine& gameEngine)
-{
+GameEngine::GameEngine(const GameEngine& other) {
+    cout << "Copy constructor called" << endl;
+    currentState = other.currentState;
+} // copy constructor for GameEngine
+
+//GameEngine::GameEngine(const GameEngine& gameEngine) {
     // copy constructor
-
-    currentState = start;
-    cout << "Game engine copied" << endl;
-
-}
+   // currentState = start;
+  //  cout << "Game engine copied" << endl;
+//}
 
 GameEngine::~GameEngine()
 {
@@ -31,32 +34,44 @@ GameEngine::~GameEngine()
 
 }
 
-GameEngine& GameEngine::operator = (const GameEngine& gameEngine) {
+//GameEngine& GameEngine::operator = (const GameEngine& gameEngine) {
     // stuff to put here
-    return *this;
+  //  return *this;
+//}
+
+/*ostream& operator << (ostream& out, const GameEngine& gameEngine) {
+
+     stream insertion operator
+     out << all things  
+
+}*/
+
+void GameEngine::startGame()
+{
+    while (true)
+    {
+        /* Get the next command to act on. */
+        Command nextCommand = commandProcessor.getCommand();
+
+        /* Acts on the command. */
+        receiveCommand(nextCommand);
+    }
 }
 
-ostream& operator << (ostream& out, const GameEngine& gameEngine) {
-
-    // stream insertion operator
-    // out << all things  
-
-}
-
-void GameEngine::sendCommand(GameEngineCommand command)
+void GameEngine::receiveCommand(Command command)
 {
     //commands are only valid depending on the state I am in
 
     switch (currentState)
     {
     case start:
-        if (command == GameEngineCommand::loadMap)
+        if (command.name.compare("loadMap") == 0)
         {
             // call to loadMap transition
             // loadMap();
             // transition states and update currentState
             currentState = mapLoaded;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::loadMap] << endl;
+            cout << "Current game state is: Map Loaded" << endl;
         }
         else {
             //invalid state transition for current state
@@ -65,21 +80,21 @@ void GameEngine::sendCommand(GameEngineCommand command)
         break;
 
     case mapLoaded:
-        if (command == GameEngineCommand::validateMap)
+        if (command.name.compare("validateMap") == 0)
         {
             // call to validateMap transition
             // validateMap();
             // transition states and update currentState
             currentState = mapValidated;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::validateMap] << endl;
+            cout << "Current game state is: Map Validated" << endl;
         }
-        else if (command == GameEngineCommand::loadMap)
+        else if (command.name.compare("loadMap") == 0)
         {
             // call to issueOrder transition
             // loadMap();
             // transition states and update currentState
             currentState = mapLoaded;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::loadMap] << endl;
+            cout << "Current game state is: Map Loaded" << endl;
         }
         else {
            // invalid state transition for current state
@@ -88,13 +103,13 @@ void GameEngine::sendCommand(GameEngineCommand command)
         break;
 
     case mapValidated:
-        if (command == GameEngineCommand::addPlayer)
+        if (command.name.compare("addPlayer") == 0)
         {
             // call to validateMap transition
             // addPlayer();
             // transition states and update currentState
             currentState = playersAdded;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::addPlayer] << endl;
+            cout << "Current game state is: Players Added" << endl;
         }
         else {
             // invalid state transition for current state
@@ -103,21 +118,21 @@ void GameEngine::sendCommand(GameEngineCommand command)
         break;
 
     case playersAdded:
-        if (command == GameEngineCommand::assignCountries)
+        if (command.name.compare("assignCountries") == 0)
         {
             // call to addPlayer transition
             // addPlayer();
             // transition states and update currentState
             currentState = assignReinforcement;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::assignCountries] << endl;
+            cout << "Current game state is: Assign Reinforcements" << endl;
         }
-        else if (command == GameEngineCommand::addPlayer)
+        else if (command.name.compare("addPlayer") == 0)
         {
             // call to issueOrder transition
             // addPlayer();
             // transition states and update currentState
             currentState = playersAdded;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::addPlayer] << endl;
+            cout << "Current game state is: Players Added " << endl;
         }
         else {
             // invalid state transition for current state
@@ -126,13 +141,13 @@ void GameEngine::sendCommand(GameEngineCommand command)
         break;
 
     case assignReinforcement:
-        if (command == GameEngineCommand::issueOrder)
+        if (command.name.compare("issueOrder") == 0)
         {
             // call to assignCountries transition
             // assignCountries();
             // transition states and update currentState
             currentState = issueOrders;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::issueOrder] << endl;
+            cout << "Current game state is: Issue Orders" << endl;
         }
         else {
             // invalid state transition for current state
@@ -141,21 +156,21 @@ void GameEngine::sendCommand(GameEngineCommand command)
         break;
 
     case issueOrders:
-        if (command == GameEngineCommand::endIssueOrders)
+        if (command.name.compare("endIssueOrders") == 0)
         {
             // call to issueOrder transition
             // issueOrder();
             // transition states and update currentState
             currentState = executeOrders;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::endIssueOrders] << endl;
+            cout << "Current game state is: Execute Orders" << endl;
         }
-        else if (command == GameEngineCommand::issueOrder)
+        else if (command.name.compare("issueOrder") == 0)
         {
             // call to issueOrder transition
             // issueOrder();
             // transition states and update currentState
             currentState = issueOrders;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::issueOrder] << endl;
+            cout << "Current game state is: Issue Orders" << endl;
         }
         else {
             // invalid state transition for current state
@@ -164,29 +179,29 @@ void GameEngine::sendCommand(GameEngineCommand command)
         break;
 
     case executeOrders:
-        if (command == GameEngineCommand::endExecOrders)
+        if (command.name.compare("endExecOrders") == 0)
         {
             // call to endIssueOrders transition
             // endIssueOrders();
             // transition states and update currentState
             currentState = assignReinforcement;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::endExecOrders] << endl;
+            cout << "Current game state is: Assign Reinforcements" << endl;
         }
-        else if (command == GameEngineCommand::execOrder)
+        else if (command.name.compare("execOrder") == 0)
         {
                 // call to execOrder transition
                 // execOrder();
                 // transition states and update currentState
                 currentState = executeOrders;
-                cout << "Current game state is: " << enumStateStr[GameEngineCommand::execOrder] << endl;
+                cout << "Current game state is: Execute Orders" << endl;
         }
-        else if (command == GameEngineCommand::winGame)
+        else if (command.name.compare("winGame") == 0)
         {
             // call to endExecOrders transition
             // endExecOrders();
             // transition states and update currentState
             currentState = win;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::winGame] << endl;
+            cout << "Current game state is: Win" << endl;
         }
         else {
             // invalid state transition for current state
@@ -195,19 +210,19 @@ void GameEngine::sendCommand(GameEngineCommand command)
         break;
 
     case win:
-        if (command == GameEngineCommand::endGame)
+        if (command.name.compare("endGame") == 0)
         {
             // call to exit game
             // transition states and update currentState
             cout << "You have ended the game" << endl;
         }
-        else if (command == GameEngineCommand::playGame)
+        else if (command.name.compare("playGame") == 0)
         {
             // call to playGame transition
             // start();
             // transition states and update currentState
             currentState = start;
-            cout << "Current game state is: " << enumStateStr[GameEngineCommand::playGame] << endl;
+            cout << "Current game state is: Start " << endl;
         }
         else {
             // invalid state transition for current state
@@ -248,5 +263,5 @@ void GameEngine::loadMap(std::string mapName) {
 
 void GameEngine::validateMap() {
     // validate map selected by user
-    validateMap(); // need a reference to the map loaded into loadedMap var?
+    //validateMap(); // need a reference to the map loaded into loadedMap var?
 }
