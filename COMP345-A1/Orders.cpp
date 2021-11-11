@@ -16,6 +16,7 @@ Order::Order(const Order& orderToCopy) {
 	this->description = new string(*(orderToCopy.description));
 	this->effect = new string(*(orderToCopy.effect));
 	this->isValid = new bool (*(orderToCopy.isValid));
+	this->iPlayer = orderToCopy.iPlayer;
 	}
 
 //Destructor
@@ -56,10 +57,10 @@ Deploy::Deploy() : Order("Deploy Order", "Deploy effect", true) {
 	//empty
 }
 //para const
-Deploy::Deploy(string description, string effect,bool valid) {
-	this->description = &description;
-	this->effect = &effect;
-	this->isValid = &valid;
+Deploy::Deploy(Player& iPlayer, Territory& targetTerr, int numArm){
+	this->iPlayer = &iPlayer;
+	this->targetTerr = &targetTerr;
+	this->numArm = numArm;
 	}
 
 //copy constructor
@@ -74,9 +75,7 @@ Deploy::~Deploy() {
 
 //inherited validate, for now just checks if true
 bool Deploy::validate() {
-	if (*this->isValid)
-		return true;
-	else return false;
+
 }
 
 //execute if validate returns true

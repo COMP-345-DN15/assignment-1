@@ -3,6 +3,8 @@
 #include <string>
 #include <list>
 #include <iostream>
+#include "Map.h"
+#include "Player.h"
 
 class Order;
 class OrdersList;
@@ -44,6 +46,7 @@ public:
 
 	string* description;
 	string* effect; 
+	Player* iPlayer;
 	bool* isValid;
 };
 
@@ -52,7 +55,7 @@ class Deploy : public Order{
 public:
 	//Constructors
 	Deploy(); //default
-	Deploy(string description, string effect, bool valid); //valid for testing
+	Deploy(Player& iPlayer, Territory& targetTerr, int numArm); //valid for testing
 	Deploy(const Deploy& DeployToCopy);
 	//Destructor
 	~Deploy();
@@ -65,6 +68,10 @@ public:
 	friend ostream& operator<<(ostream& out, const Deploy& o);
 
 	Deploy& operator =(const Deploy& o);
+	Territory* targetTerr;
+	int numArm{0};
+
+
 };
 
 //Advance class
