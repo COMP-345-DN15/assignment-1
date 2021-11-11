@@ -14,6 +14,8 @@ using std::string;
 using std::ostream;
 using std::list;
 using std::endl;
+using std::find;
+
 
 
 //order class
@@ -79,7 +81,7 @@ class Advance : public Order {
 public:
 	//Constructors
 	Advance(); //default
-	Advance(string description, string effect, bool valid); //valid for testing
+	Advance(Player& iPlayer, Territory& sourceTerr, Territory& targetTerr, int numArm); //valid for testing
 	Advance(const Advance& AdvanceToCopy);
 	//Destructor
 	~Advance();
@@ -92,6 +94,11 @@ public:
 	friend ostream& operator<<(ostream& out, const Advance& o);
 
 	Advance& operator =(const Advance& o);
+
+	Territory* sourceTerr{ nullptr };
+	Territory* targetTerr{ nullptr };
+	int numArm{ 0 };
+
 };
 
 //Bomb class

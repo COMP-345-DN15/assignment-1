@@ -75,14 +75,19 @@ Deploy::~Deploy() {
 
 //inherited validate, for now just checks if true
 bool Deploy::validate() {
+	vector<Territory*> listOwned = iPlayer->listOfTerritoriesOwned;
+	if (find(listOwned.begin(), listOwned.end(), targetTerr) != listOwned.end() && numArm > 0) {
+		return true;
+	}
+	else return false;
 
 }
 
 //execute if validate returns true
 bool Deploy::execute() {
-	if (this->validate()) {
-		cout << this->getEffect() << endl;
-		return true;
+	if (validate()) {
+		targetTerr.armyCount += numArm;
+		cout << "added" << numArm ;
 	}
 	else return false;
 }
@@ -106,10 +111,12 @@ Advance::Advance() : Order("Advance Order", "Advance effect", true) {
 	//empty
 }
 //para const
-Advance::Advance(string description, string effect, bool valid) {
-	this->description = &description;
-	this->effect = &effect;
-	this->isValid = &valid;
+Advance::Advance(Player& iPlayer, Territory& sourceTerr, Territory& targetTerr, int numArm) {
+	this->iPlayer = &iPlayer;
+	this->sourceTerr = &sourceTerr;
+	this->targetTerr = &targetTerr;
+	this->numArm = numArm;
+
 }
 
 //copy constructor
@@ -124,9 +131,13 @@ Advance::~Advance() {
 
 //inherited validate, for now just checks if true
 bool Advance::validate() {
-	if (*this->isValid)
-		return true;
-	else return false;
+
+	vector<vector<int>> *borders = MapLoader::borders;
+	for (int i = 0; i < borders.size(); i++) {
+		for (int j = 0; j < borders.at(i).size(); j++) {
+			borders.at(i).at(j) = // an int with a territoryID
+		}
+	}
 }
 
 //execute if validate returns true

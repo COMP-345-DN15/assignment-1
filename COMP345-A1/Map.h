@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -48,29 +49,20 @@ public:
     int territoryStartIndex;
     Territory* territoriesArray;
     Continent* continentsArray;
-
+    vector<Continent> contVector;
+    vector<Territory> terrVector;
     Territory* getTerritory(int index);
     
-//    Map(MapLoader mapLoaderObject, Territory* territoriesArray);   // Parameterized Constructor
-//    Map(MapLoader mapLoaderObj, string* continentNames, string* countryNames, int* continentIDs, int* armies);
     Map(MapLoader* mapLoaderObject);
     Map(Map* map);
     ~Map();                                    // Destructor
-
     void AddEdge(int origin, int destination);		// Adds a bi-directional edge from territories[origin] to territories[destination]
-
-
     bool validate();                        // returns whether a map is valid or invalid
     int visitedNodesCount;
-    
-    int breadthFirstSearch(int bfs, Continent* continentToCheck = 0);
-
     int territoryNodeCount();
     int continentNodeCount(Continent *cont);
-//    void transferElements(int* integerArray = 0, string* stringArray = 0);
-    void transferTerritories(Territory* territories, string* territoryNames, int* continentIDs);
-    
     Territory* getTerritoriesArray();
+    Map& operator=(const Map& map);
 
 private:
 
@@ -84,21 +76,25 @@ public:
     MapLoader();            // Default constructor
     MapLoader(string);        // Constructor passing file name
     ~MapLoader();
+    
+    Map* mapObject;            // Map object associated to MapLoader Object
+    
     void readFile();        // Read .map file
     void makeConnections(Map* userMap); // Reads details and creates edges
     ifstream inputFile;        // Input stream
-    string userIn;            // To hold user's input for the file name
+    string fileName;            // To hold user's input for the file name
     string line;            // To hold input stream line
-    int count;                // To index the arrays
+    int arrayIndex;                // To index the arrays
     int continentCount;        // To store number of continents
     int countryCount;        // To store number of countries
     string* continentName;    // Dynamic array for continent names
-    string* countryName;    // Dynamic array for country names
-    int* countryIn;            // Dynamic array to know what continent each country belongs to
+//    string* countryName;    // Dynamic array for country names
+    vector<string> countryNameVector;
+//    int* countryContinentIdArray;            // Dynamic array to know what continent each country belongs to
+    vector<int> countryContinentIdVector;
     int* armies;            // Dynamic array for every continent's army count
-    string* borders;        // Dynamic array for borders of each country by index
-    
-    int* getCountryArray();
+    vector<vector<int>> borders;
+    vector<int> getCountryArray();
     string* getContinentIDArray();
     
 private:
