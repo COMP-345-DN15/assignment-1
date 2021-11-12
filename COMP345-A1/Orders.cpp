@@ -84,12 +84,11 @@ bool Deploy::validate() {
 }
 
 //execute if validate returns true
-bool Deploy::execute() {
+void Deploy::execute() {
 	if (validate()) {
 		targetTerr.armyCount += numArm;
 		cout << "added" << numArm ;
 	}
-	else return false;
 }
 
 // Overloads the stream insertion operator.
@@ -111,10 +110,10 @@ Advance::Advance() : Order("Advance Order", "Advance effect", true) {
 	//empty
 }
 //para const
-Advance::Advance(Player& iPlayer, Territory& sourceTerr, Territory& targetTerr, int numArm) {
+Advance::Advance(Player& iPlayer, Territory& sourceTerr, int targetTerr, int numArm) {
 	this->iPlayer = &iPlayer;
 	this->sourceTerr = &sourceTerr;
-	this->targetTerr = &targetTerr;
+	this->targetTerr = targetTerr;
 	this->numArm = numArm;
 
 }
@@ -131,22 +130,40 @@ Advance::~Advance() {
 
 //inherited validate, for now just checks if true
 bool Advance::validate() {
+	vector<Territory*> listOwned = iPlayer->listOfTerritoriesOwned;
+	vector<int> adjList = sourceTerr->borders;
 
-	vector<vector<int>> *borders = MapLoader::borders;
-	for (int i = 0; i < borders.size(); i++) {
-		for (int j = 0; j < borders.at(i).size(); j++) {
-			borders.at(i).at(j) = // an int with a territoryID
+	if (numArm >= 0) {
+		if (find(listOwned.begin(), listOwned.end(), sourceTerr) != listOwned.end()) {
+			if (find(adjList.begin(), adjList.end(), targetTerr) != adjList.end()) {
+				return true;
+			}
+			else return false;
 		}
+		else return false;
 	}
+	else return false;
 }
 
 //execute if validate returns true
-bool Advance::execute() {
-	if (this->validate()) {
-		cout << this->getEffect() << endl;
-		return true;
+void Advance::execute() {
+	
+
+	if (validate()) {
+		vector<Territory*> listOwned = iPlayer->listOfTerritoriesOwned;
+		vector<int> adjList = sourceTerr->borders;
+
+		for (auto intIt = listOwned.begin(); intIt != listOwned.end(); intIt++) {
+			if ((*intIt)->territoryID == targetTerr) {
+				Territory* target = *intIt;
+				sourceTerr->armyCount -= numArm;
+				target->armyCount += numArm;
+			}
+		}
+
+		
 	}
-	else return false;
+
 }
 
 // Overloads the stream insertion operator.

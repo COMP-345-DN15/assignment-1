@@ -39,7 +39,7 @@ public:
 	virtual bool validate() = 0;
 
 	//execute to inherit, same virtual
-	virtual bool execute() = 0;
+	virtual void execute() = 0;
 	
 	//stream operator stuff
 	friend ostream& operator<<(ostream& out, const Order& o);
@@ -64,7 +64,7 @@ public:
 
 	//inherited service stuff
 	bool validate() override final;
-	bool execute() override final;
+	void execute() override final;
 
 	//stream stuff
 	friend ostream& operator<<(ostream& out, const Deploy& o);
@@ -81,14 +81,14 @@ class Advance : public Order {
 public:
 	//Constructors
 	Advance(); //default
-	Advance(Player& iPlayer, Territory& sourceTerr, Territory& targetTerr, int numArm); //valid for testing
+	Advance(Player& iPlayer, Territory& sourceTerr, int targetTerr, int numArm); //valid for testing
 	Advance(const Advance& AdvanceToCopy);
 	//Destructor
 	~Advance();
 
 	//inherited service stuff
 	bool validate() override final;
-	bool execute() override final;
+	void execute() override final;
 
 	//stream stuff
 	friend ostream& operator<<(ostream& out, const Advance& o);
@@ -96,7 +96,7 @@ public:
 	Advance& operator =(const Advance& o);
 
 	Territory* sourceTerr{ nullptr };
-	Territory* targetTerr{ nullptr };
+	int targetTerr{ 0 };
 	int numArm{ 0 };
 
 };

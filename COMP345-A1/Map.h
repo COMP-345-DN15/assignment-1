@@ -23,6 +23,9 @@ struct Territory {        // The graph’s nodes represents a territory (implement
     int continentID;
     string territoryName;
     int territoryID;
+    vector<int> borders;
+    int armyCount;
+
 };
 
 struct Continent {
