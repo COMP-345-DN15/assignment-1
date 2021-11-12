@@ -8,10 +8,26 @@
 #include "CommandProcessor.h"
 #include "FileCommandProcessorAdapter.h"
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter() {
-    //noop
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(string commandsFileName)
+{
+    this->fileLineReader = new FileLineReader(commandsFileName);
 }
 
-void FileCommandProcessorAdapter::readCommand(string command) {
-    //command = fileLineReader.readLinesFromFile;
+FileCommandProcessorAdapter::~FileCommandProcessorAdapter()
+{
+    delete this->fileLineReader;
+}
+
+Command* FileCommandProcessorAdapter::readCommand()  {
+
+    string nextLine = "invalid";
+
+    do {
+
+        nextLine = fileLineReader->readLineFromFile();
+
+    } while (!validate(nextLine));
+    
+
+    return new Command(nextLine, "");
 }

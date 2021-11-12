@@ -1,13 +1,20 @@
 #pragma once
+
+#include <fstream>
 #include <iostream>
+#include <string>
+
+#include "CommandProcessor.h"
 
 using namespace std;
 
 class FileLineReader {
 private:
-	void readCommand();
-	void readLinesFromFile();
+	string fileName;
+	string line;
+	ifstream fileStream;
 public:
-	string command;
-	FileLineReader();
+	FileLineReader(string);
+	~FileLineReader();
+	string readLineFromFile();
 };

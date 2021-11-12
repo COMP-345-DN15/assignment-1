@@ -5,9 +5,10 @@
 
 class FileCommandProcessorAdapter : public CommandProcessor {
 private:
-	FileLineReader fileLineReader;
+	FileLineReader* fileLineReader;
 	CommandProcessor commandProcessor;
 public:
-	FileCommandProcessorAdapter();
-	void readCommand(string);
+	FileCommandProcessorAdapter(string);
+	~FileCommandProcessorAdapter();
+	Command* readCommand() override;
 };

@@ -12,7 +12,7 @@ class GameEngine {
 private:
 
 	GameEngineState currentState;
-	CommandProcessor commandProcessor;
+	CommandProcessor* commandProcessor;
 	void loadMap(std::string mapName);
 	// void addPlayer;
 	// void assignCountries;
@@ -27,7 +27,8 @@ private:
 public:
 
 	// constructors, assignment operator, destructor
-	GameEngine(); // constructor for the GameEngine
+	GameEngine(); // constructor for the GameEngine with cmds from console
+	GameEngine(string commandsFileName); // constructor for the GameEngine with cmds from file
 	GameEngine(const GameEngine& args);
 	~GameEngine(); // destructor for the GameEngine
 	GameEngine& operator= (const GameEngine& other) {
@@ -37,10 +38,13 @@ public:
 	
 	void startGame();
 
-	void receiveCommand(Command command);
+	void receiveCommand(Command* command);
 	void validateMap();
 
 	// stream operator if necessary
 	friend ostream& operator<<(ostream& out, const GameEngine& ge);
+
+	string consoleGamePlay = "Console";
+	string fileGamePlay = "File";
 
 };

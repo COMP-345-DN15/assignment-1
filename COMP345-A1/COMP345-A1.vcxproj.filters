@@ -54,6 +54,9 @@
     <ClCompile Include="FileCommandProcessorAdapter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileLineReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameEngine.h">
@@ -77,8 +80,14 @@
     <ClInclude Include="CommandProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileCommandProcessor.h">
+    <ClInclude Include="FileLineReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FileCommandProcessorAdapter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="commands.txt" />
   </ItemGroup>
 </Project>

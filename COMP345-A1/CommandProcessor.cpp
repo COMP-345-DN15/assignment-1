@@ -14,41 +14,50 @@ Command::~Command()
 
 }
 
+void Command::saveEffect(string effect) {
+	this->effect = effect;
+}
+
 CommandProcessor::CommandProcessor()
 {
-     
 	/* Create a list of all valid commands that can be played. */
 
-	//validCommands = new vector<Command>();
+	validCommands.push_back(new Command("loadMap", ""));
+	validCommands.push_back(new Command("validateMap", ""));
+	validCommands.push_back(new Command("addPlayer", ""));
+	validCommands.push_back(new Command("gameStart", ""));
+	validCommands.push_back(new Command("issueOrder", ""));
+	validCommands.push_back(new Command("endIssueOrders", ""));
+	validCommands.push_back(new Command("execOrder", ""));
+	validCommands.push_back(new Command("endExecOrders", ""));
+	validCommands.push_back(new Command("winGame", ""));
+	validCommands.push_back(new Command("endGame", ""));
+	validCommands.push_back(new Command("playGame", ""));
 
-	validCommands.push_back(Command("loadMap", "TODO"));
-	validCommands.push_back(Command("validateMap", "TODO"));
-	validCommands.push_back(Command("addPlayer", "TODO"));
-	validCommands.push_back(Command("assignCountries", "TODO"));
-	validCommands.push_back(Command("issueOrder", "TODO"));
-	validCommands.push_back(Command("endIssueOrders", "TODO"));
-	validCommands.push_back(Command("execOrder", "TODO"));
-	validCommands.push_back(Command("endExecOrders", "TODO"));
-	validCommands.push_back(Command("winGame", "TODO"));
-	validCommands.push_back(Command("endGame", "TODO"));
-	validCommands.push_back(Command("playGame", "TODO"));
-
+	invalidCommand = new Command("invalid", "invalid");
 }
 
 CommandProcessor::~CommandProcessor()
 {
-	//delete validCommands;
-	//free each command in the validCommands vector
+	for (int i = 0; i < commands.size(); i++) {
+		delete commands[i];
+	}
+
+	for (int i = 0; i < validCommands.size(); i++) {
+		delete validCommands[i];
+	}
+
+	delete invalidCommand;
 }
 
 /*
 * The GameEngine calls this function to get the next commands to act on.
 */
-Command CommandProcessor::getCommand() {
+Command* CommandProcessor::getCommand() {
 
     /* Get a command from the console or a file. */
 
-    Command nextCommand = readCommand();
+    Command* nextCommand = readCommand();
 
     /* Save the command to the list of commands. */
 
@@ -60,39 +69,37 @@ Command CommandProcessor::getCommand() {
 /*
 * Save the command to the commands list.
 */
-void CommandProcessor::saveCommand(Command command)
+void CommandProcessor::saveCommand(Command* command)
 {
     commands.push_back(command);
 }
 
-Command CommandProcessor::getCommandFromString(string commandInput)
+bool CommandProcessor::validate(string commandInput)
 {
 	for (int i = 0; i < validCommands.size(); i++) {
-		if (commandInput.compare(validCommands[i].name) == 0)
-			return validCommands[i];
+		if (commandInput.compare(validCommands[i]->name) == 0)
+			return true;
 	}
 
-	return Command("invalid", "invalid");
+	return false;
 }
 
 /*
 * Return the next command, either from a text from or from the keyboard.
 */
-Command CommandProcessor::readCommand() {
-
-	//for now we are only reading the commands from the keyboard.
-	//this function needs to be adapted to read the commands from the file with the FLR.
+Command* CommandProcessor::readCommand() {
 
 	/* Read command from keyboard. */
 
-	Command nextCommand = Command("invalid", "invalid");
+	string userInput = "invalid";
 
 	do {
-		cout << "Enter the next command: " << endl;
-		string userInput;
-		cin >> userInput;
-		nextCommand = getCommandFromString(userInput);
-	} while (nextCommand.name.compare("invalid") == 0);
 
-	return nextCommand;
+		cout << "Enter the next command: " << endl;
+		cin >> userInput;
+
+	} while (!validate(userInput));
+
+
+	return new Command(userInput, "");
 }

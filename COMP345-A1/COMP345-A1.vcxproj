@@ -201,6 +201,7 @@
     <ClCompile Include="CommandProcessor.cpp" />
     <ClCompile Include="Driver.cpp" />
     <ClCompile Include="FileCommandProcessorAdapter.cpp" />
+    <ClCompile Include="FileLineReader.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="GameEngineDriver.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -213,12 +214,16 @@
   <ItemGroup>
     <ClInclude Include="Cards.h" />
     <ClInclude Include="CommandProcessor.h" />
-    <ClInclude Include="FileCommandProcessor.h" />
+    <ClInclude Include="FileCommandProcessorAdapter.h" />
+    <ClInclude Include="FileLineReader.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="GameEngineDriver.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Orders.h" />
     <ClInclude Include="Player.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="commands.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

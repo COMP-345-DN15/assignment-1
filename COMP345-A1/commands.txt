@@ -1,0 +1,9 @@
+loadMap
+validateMap
+addPlayer
+gameStart
+issueOrder
+endIssueOrders
+execOrder
+winGame
+endGame
