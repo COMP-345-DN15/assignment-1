@@ -113,7 +113,7 @@ public:
 
 	//inherited service stuff
 	bool validate() override final;
-	bool execute() override final;
+	void execute() override final;
 
 	//stream stuff
 	friend ostream& operator<<(ostream& out, const Bomb& o);
@@ -133,7 +133,7 @@ public:
 
 	//inherited service stuff
 	bool validate() override final;
-	bool execute() override final;
+	void execute() override final;
 
 	//stream stuff
 	friend ostream& operator<<(ostream& out, const Blockade& o);
@@ -153,7 +153,7 @@ public:
 
 	//inherited service stuff
 	bool validate() override final;
-	bool execute() override final;
+	void execute() override final;
 
 	//stream stuff
 	friend ostream& operator<<(ostream& out, const Airlift& o);
@@ -173,7 +173,7 @@ public:
 
 	//inherited service stuff
 	bool validate() override final;
-	bool execute() override final;
+	void execute() override final;
 
 	//stream stuff
 	friend ostream& operator<<(ostream& out, const Negotiate& o);

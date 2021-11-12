@@ -53,7 +53,8 @@ Order& Order::operator=(const Order& orderToAssign) {
 
 //Deploy order class-------------------------------------------------------------------
 //constructors
-Deploy::Deploy() : Order("Deploy Order", "Deploy effect", true) {
+Deploy::Deploy(string name, string effect)  {
+
 	//empty
 }
 //para const
