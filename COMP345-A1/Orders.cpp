@@ -53,7 +53,8 @@ Order& Order::operator=(const Order& orderToAssign) {
 
 //Deploy order class-------------------------------------------------------------------
 //constructors
-Deploy::Deploy(string name, string effect)  {
+Deploy::Deploy() : Order("Deploy Order", "Deploy Effect", true) {
+	
 
 	//empty
 }
@@ -87,7 +88,7 @@ bool Deploy::validate() {
 //execute if validate returns true
 void Deploy::execute() {
 	if (validate()) {
-		targetTerr.armyCount += numArm;
+		(*targetTerr).armyCount += numArm;
 		cout << "added" << numArm ;
 	}
 }
@@ -153,6 +154,8 @@ void Advance::execute() {
 	if (validate()) {
 		vector<Territory*> listOwned = iPlayer->listOfTerritoriesOwned;
 		vector<int> adjList = sourceTerr->borders;
+
+
 
 		for (auto intIt = listOwned.begin(); intIt != listOwned.end(); intIt++) {
 			if ((*intIt)->territoryID == targetTerr) {
