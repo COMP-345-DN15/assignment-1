@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "Player.h"
 
 using namespace std;
 
@@ -24,9 +23,10 @@ struct Territory {        // The graph’s nodes represents a territory (implement
     int continentID;
     string territoryName;
     int territoryID;
-    vector<int> borders;
     int armyCount;
-    Player* player{nullptr};
+    vector<int> borders;
+    string territoryOwner;
+    void setArmyAmount(int);
 
 };
 

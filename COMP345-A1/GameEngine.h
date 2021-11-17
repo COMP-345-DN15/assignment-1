@@ -33,6 +33,7 @@ public:
 	void sendCommand(GameEngineCommand command);
 	void validateMap();
 
+	vector<Player> playersVector;
 	// stream operator if necessary
 	friend ostream& operator<<(ostream& out, const GameEngine& ge);
 

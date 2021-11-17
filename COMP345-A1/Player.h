@@ -19,6 +19,7 @@ public:
 	vector<Territory*> listOfTerritoriesToDefend;
 	vector<Player*> contractsWith;
 
+	bool* neutral;
 
 	Player();
 	Player(string pname);

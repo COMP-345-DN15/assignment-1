@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Map.h"
 #include "Player.h"
+#include "GameEngine.h"
 
 class Order;
 class OrdersList;
@@ -37,7 +38,7 @@ public:
 	bool getValid();
 
 	//inline declarations to return the pointer to the player for comparison purposes
-	Player* getPlayer(Territory* t) {return t->player;}
+	Player* getPlayer(Territory* t);
 	Player* getPlayer() {this->iPlayer;}
 
 	//validate to inherit, virtual for child classes
@@ -54,6 +55,7 @@ public:
 	string* description;
 	string* effect; 
 	Player* iPlayer;
+	GameEngine* gameEngine;
 	bool* isValid;
 };
 
@@ -62,7 +64,7 @@ class Deploy : public Order{
 public:
 	//Constructors
 	Deploy(); //default
-	Deploy(Player& iPlayer, Territory& targetTerr, int numArm); //valid for testing
+	Deploy(Player& iPlayer, Territory& targetTerr, int numArm, GameEngine* gameEngine); //valid for testing
 	Deploy(const Deploy& DeployToCopy);
 	//Destructor
 	~Deploy();
@@ -86,7 +88,7 @@ class Advance : public Order {
 public:
 	//Constructors
 	Advance(); //default
-	Advance(Player& iPlayer, Territory& sourceTerr, Territory& targetTerr, int numArm); //valid for testing
+	Advance(Player& iPlayer, Territory& sourceTerr, Territory& targetTerr, int numArm, GameEngine* gameEngine); //valid for testing
 	Advance(const Advance& AdvanceToCopy);
 	//Destructor
 	~Advance();
@@ -111,7 +113,7 @@ class Bomb : public Order {
 public:
 	//Constructors
 	Bomb(); //default
-	Bomb(Territory& target, Player& player); //valid for testing
+	Bomb(Territory& target, Player& player, GameEngine* gameEngine); //valid for testing
 	Bomb(const Bomb& BombToCopy);
 	//Destructor
 	~Bomb();
@@ -134,7 +136,7 @@ class Blockade : public Order {
 public:
 	//Constructors
 	Blockade(); //default
-	Blockade(Player& player, Territory& target); //valid for testing
+	Blockade(Player& player, Territory& target, GameEngine* gameEngine); //valid for testing
 	Blockade(const Blockade& BlockadeToCopy);
 	//Destructor
 	~Blockade();
@@ -156,7 +158,7 @@ class Airlift : public Order {
 public:
 	//Constructors
 	Airlift(); //default
-	Airlift(Player& player, Territory& source, Territory& target, int armCount); //valid for testing
+	Airlift(Player& player, Territory& source, Territory& target, int armCount, GameEngine* gameEngine); //valid for testing
 	Airlift(const Airlift& AirliftToCopy);
 	//Destructor
 	~Airlift();

@@ -11,9 +11,7 @@ Order::Order(string name, string effect) {
 	this->description = new string(name);
 	this->description = new string(effect);
 	this->iPlayer = nullptr;
-
-
-
+	this->gameEngine = nullptr;
 }
 
 //para constructor
@@ -46,6 +44,25 @@ bool Order::getValid() {
 	}
 	else return false;
 }
+
+
+Player* Order::getPlayer(Territory* t) {
+	for (auto iterator = gameEngine->playersVector.begin(); iterator != gameEngine->playersVector.end(); iterator++ ) {
+		vector<Territory*> ownList = iterator->listOfTerritoriesOwned;
+		for (auto listIt = ownList.begin(); listIt != ownList.end(); listIt++) {
+			if ((*listIt) == t) {
+				Player* retPoint = &(*iterator) ;
+				return retPoint;
+			}
+		}
+	}
+
+
+}
+
+
+
+
 //stream insertion operator overload
 ostream& operator<<(ostream& out, const Order& orderToStream) {
 	out << *(orderToStream.description);
@@ -67,10 +84,11 @@ Deploy::Deploy() : Order("Deploy Order", "If the target territory belongs to the
 	//empty
 }
 //para const
-Deploy::Deploy(Player& iPlayer, Territory& targetTerr, int numArm){
+Deploy::Deploy(Player& iPlayer, Territory& targetTerr, int numArm, GameEngine* gameEngine){
 	this->iPlayer = &iPlayer;
 	this->targetTerr = &targetTerr;
 	this->numArm = numArm;
+	this->gameEngine = gameEngine;
 	}
 
 //copy constructor
@@ -120,11 +138,12 @@ Advance::Advance() : Order("Advance Order", "An advance order tells a certain nu
 	//empty
 }
 //para const
-Advance::Advance(Player& iPlayer, Territory& sourceTerr, Territory& targetTerr, int numArm) {
+Advance::Advance(Player& iPlayer, Territory& sourceTerr, Territory& targetTerr, int numArm, GameEngine* gameEngine) {
 	this->iPlayer = &iPlayer;
 	this->sourceTerr = &sourceTerr;
 	this->targetTerr = &targetTerr;
 	this->numArm = numArm;
+	this->gameEngine = gameEngine;
 
 }
 
@@ -177,7 +196,7 @@ void Advance::execute() {
 		if (getPlayer(targetTerr) == nullptr) {
 			targetTerr->armyCount += numArm;
 			sourceTerr->armyCount -= numArm;
-			targetTerr->player = iPlayer;
+			getPlayer(sourceTerr)->listOfTerritoriesOwned.push_back(targetTerr);
 			cout << targetTerr->territoryName << "now has " << numArm << "armies and belongs to " << iPlayer->name << endl;
 		}
 
@@ -211,7 +230,12 @@ void Advance::execute() {
 				
 			if (defCount == 0) {
 				targetTerr->armyCount = atkCount;
-				targetTerr->player = iPlayer;
+				for (auto it = getPlayer(targetTerr)->listOfTerritoriesOwned.begin(); it != getPlayer(targetTerr)->listOfTerritoriesOwned.end(); it++) {
+					if ((*it) == targetTerr) {
+						getPlayer(targetTerr)->listOfTerritoriesOwned.erase(it);
+					}
+				}
+				getPlayer(sourceTerr)->listOfTerritoriesOwned.push_back(targetTerr);
 
 				cout << "All defenders have died" << endl;
 			}
@@ -240,9 +264,10 @@ Bomb::Bomb() : Order("Bomb Order", "A bomb order targets a territory owned by an
 	//empty
 }
 //para const
-Bomb::Bomb(Territory& target, Player& player) {
+Bomb::Bomb(Territory& target, Player& player, GameEngine* gameEngine) {
 	this->iPlayer = &player;
 	this->target = &target;
+	this->gameEngine = gameEngine;
 
 }
 
@@ -304,9 +329,10 @@ Blockade::Blockade() : Order("Blockade Order", "A blockade order targets a terri
 	//empty
 }
 //para const
-Blockade::Blockade(Player& player, Territory& target) {
+Blockade::Blockade(Player& player, Territory& target, GameEngine* gameEngine) {
 	this->iPlayer = &player;
 	this->target = &target;
+	this->gameEngine = gameEngine;
 
 	
 }
@@ -336,7 +362,7 @@ void Blockade::execute() {
 	if (validate()) {
 		int doubleArm = target->armyCount * 2;
 		target->armyCount = doubleArm;
-		target->player = nullptr;
+		*getPlayer(target)->neutral = true;
 		cout << target->territoryName << " is now blockaded" << endl;
 	}
 }
@@ -359,10 +385,11 @@ Airlift::Airlift() : Order("Airlift Order", "An airlift order tells a certain nu
 	//empty
 }
 //para const
-Airlift::Airlift(Player& player, Territory& source, Territory& targetTerr, int numArm) {
+Airlift::Airlift(Player& player, Territory& source, Territory& targetTerr, int numArm, GameEngine* gameEngine) {
 	this->iPlayer = &player;
 	this->targetTerr = &targetTerr;
 	this->numArm = numArm;
+	this->gameEngine = gameEngine;
 
 }
 
@@ -430,7 +457,12 @@ void Airlift::execute() {
 
 			if (defCount == 0) {
 				targetTerr->armyCount = atkCount;
-				targetTerr->player = iPlayer;
+				for (auto it = getPlayer(targetTerr)->listOfTerritoriesOwned.begin(); it != getPlayer(targetTerr)->listOfTerritoriesOwned.end(); it++) {
+					if ((*it) == targetTerr) {
+						getPlayer(targetTerr)->listOfTerritoriesOwned.erase(it);
+					}
+				}
+				getPlayer(source)->listOfTerritoriesOwned.push_back(targetTerr);
 
 				cout << "All defenders have died" << endl;
 			}
