@@ -61,7 +61,7 @@ Order& Order::operator=(const Order& orderToAssign) {
 
 //Deploy order class-------------------------------------------------------------------
 //constructors
-Deploy::Deploy() : Order("Deploy Order", "Deploy Effect") {
+Deploy::Deploy() : Order("Deploy Order", "If the target territory belongs to the player that issued the deploy order, the selected number of armies is added to the number of armies on that territory") {
 	
 
 	//empty
@@ -85,8 +85,10 @@ Deploy::~Deploy() {
 
 //inherited validate, for now just checks if true
 bool Deploy::validate() {
-	if (getPlayer() != getPlayer(targetTerr))
+	if (getPlayer() != getPlayer(targetTerr)) {
+		cout << "Target territory does not belong to issuing player" << endl;
 		return false;
+	}
 	else return true;
 
 }
@@ -95,7 +97,7 @@ bool Deploy::validate() {
 void Deploy::execute() {
 	if (validate()) {
 		(*targetTerr).armyCount += numArm;
-		cout << "added" << numArm ;
+		cout << "added" << numArm << endl;
 	}
 }
 
@@ -114,7 +116,7 @@ Deploy& Deploy::operator=(const Deploy& deployToAssign) {
 
 //Advance order class-------------------------------------------------------------------
 //constructors
-Advance::Advance() : Order("Advance Order", "Advance effect") {
+Advance::Advance() : Order("Advance Order", "An advance order tells a certain number of army units to move from a source territory to a target adjacent territory") {
 	//empty
 }
 //para const
@@ -142,18 +144,25 @@ bool Advance::validate() {
 	vector<int> adjList = sourceTerr->borders;
 
 	if (numArm >= 0) {
-		if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), getPlayer(targetTerr)) != iPlayer->contractsWith.end())
-			return false;
-
 		if (find(listOwned.begin(), listOwned.end(), sourceTerr) != listOwned.end()) {
 			if (find(adjList.begin(), adjList.end(), targetTerr) != adjList.end()) {
 				return true;
 			}
-			else return false;
+			else {
+				cout << "Territories not adjacent" << endl;
+				return false;
+			}
 		}
-		else return false;
+		else { 
+			cout << "Territory not owned by issuing player" << endl;
+			return false; 
+		}
 	}
-	else return false;
+	else {
+		cout << "Army count must be greater than 0" << endl;
+		return false;
+	}
+
 }
 
 //execute if validate returns true
@@ -167,13 +176,16 @@ void Advance::execute() {
 		//if target unowned
 		if (getPlayer(targetTerr) == nullptr) {
 			targetTerr->armyCount += numArm;
+			sourceTerr->armyCount -= numArm;
 			targetTerr->player = iPlayer;
+			cout << targetTerr->territoryName << "now has " << numArm << "armies and belongs to " << iPlayer->name << endl;
 		}
 
 		//if same player
 		if (getPlayer() == getPlayer(targetTerr)) {
 			targetTerr->armyCount += numArm;
 			sourceTerr->armyCount -= numArm;
+			cout << targetTerr->territoryName << "now has " << numArm << endl;
 			}
 
 		//if different players BATTLE!
@@ -192,12 +204,16 @@ void Advance::execute() {
 					atkCount--;
 			}
 
-			if (atkCount == 0)
+			if (atkCount == 0) {
 				targetTerr->armyCount = defCount;
+				cout << "All atackers have died" << endl;
+				}
 				
 			if (defCount == 0) {
 				targetTerr->armyCount = atkCount;
 				targetTerr->player = iPlayer;
+
+				cout << "All defenders have died" << endl;
 			}
 		}
 
@@ -220,7 +236,7 @@ Advance& Advance::operator=(const Advance& advanceToAssign) {
 
 //Bomb order class-------------------------------------------------------------------
 //constructors
-Bomb::Bomb() : Order("Bomb Order", "Bomb effect") {
+Bomb::Bomb() : Order("Bomb Order", "A bomb order targets a territory owned by another player than the one issuing the order. Its result is to remove half of the armies from this territory.") {
 	//empty
 }
 //para const
@@ -245,11 +261,15 @@ bool Bomb::validate() {
 	if (getPlayer(target) == nullptr)
 		return true;
 
-	if (getPlayer() == getPlayer(target))
+	if (getPlayer() == getPlayer(target)) {
+		cout << "Target player is the same as issuing player!" << endl;
 		return false;
+	}
 
-	if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), getPlayer(target)) != iPlayer->contractsWith.end())
+	if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), getPlayer(target)) != iPlayer->contractsWith.end()) {
+		cout << "There is a contract contradiction between the two players!" << endl;
 		return false;
+	}
 
 
 	else return true;
@@ -261,6 +281,7 @@ void Bomb::execute() {
 	if (validate()) {
 		int half = target->armyCount / 2;
 		target->armyCount = half;
+		cout << "There are now " << half << "armies on" << target->territoryName << endl;
 
 	}
 }
@@ -279,7 +300,7 @@ Bomb& Bomb::operator=(const Bomb& bombToAssign) {
 
 //Blockade order class-------------------------------------------------------------------
 //constructors
-Blockade::Blockade() : Order("Blockade Order", "Blockade effect") {
+Blockade::Blockade() : Order("Blockade Order", "A blockade order targets a territory that belongs to the player issuing the order. Its effect is to double the number of armies on the territory and to transfer the ownership of the territory to the Neutral player") {
 	//empty
 }
 //para const
@@ -302,9 +323,12 @@ Blockade::~Blockade() {
 
 //inherited validate, for now just checks if true
 bool Blockade::validate() {
-	if (getPlayer(target) == iPlayer)
+	if (getPlayer(target) == getPlayer())
 		return true;
-	else return false;
+	else {
+		cout << "Player can only blockade itself" << endl;
+		return false;
+	}
 }
 
 //execute if validate returns true
@@ -313,6 +337,7 @@ void Blockade::execute() {
 		int doubleArm = target->armyCount * 2;
 		target->armyCount = doubleArm;
 		target->player = nullptr;
+		cout << target->territoryName << " is now blockaded" << endl;
 	}
 }
 
@@ -330,7 +355,7 @@ Blockade& Blockade::operator=(const Blockade& blockadeToAssign) {
 
 //Airlift order class-------------------------------------------------------------------
 //constructors
-Airlift::Airlift() : Order("Airlift Order", "Airlift order") {
+Airlift::Airlift() : Order("Airlift Order", "An airlift order tells a certain number of armies taken from a source territory to be moved to a target territory, the source territory being owned by the player issuing the order.") {
 	//empty
 }
 //para const
@@ -353,14 +378,20 @@ Airlift::~Airlift() {
 
 //inherited validate, for now just checks if true
 bool Airlift::validate() {
-	if (iPlayer != (getPlayer(targetTerr)) || iPlayer != (getPlayer(source))) {
+	if (getPlayer() != (getPlayer(targetTerr)) || getPlayer() != (getPlayer(source))) {
+		cout << "Either source or target does not belong to the player that issued the order" << endl;
 		return false;
 	}
-	if (numArm <= 0)
+	if (numArm <= 0) {
+		cout << "Number or armies must be greater than 0." << endl;
 		return false;
+	}
 
-	if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), getPlayer(targetTerr)) != iPlayer->contractsWith.end())
+
+	if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), getPlayer(targetTerr)) != iPlayer->contractsWith.end()) {
+		cout << "There is a contract contradiction between the two players!" << endl;
 		return false;
+	}
 	
 	else return true;
 }
@@ -373,6 +404,7 @@ void Airlift::execute() {
 		if (getPlayer() == getPlayer(targetTerr)) {
 			targetTerr->armyCount += numArm;
 			source->armyCount -= numArm;
+			cout << targetTerr->territoryName << "now has " << numArm << endl;
 		}
 
 		//if different players BATTLE!
@@ -391,12 +423,16 @@ void Airlift::execute() {
 					atkCount--;
 			}
 
-			if (atkCount == 0)
+			if (atkCount == 0) {
 				targetTerr->armyCount = defCount;
+				cout << "All atackers have died" << endl;
+			}
 
 			if (defCount == 0) {
 				targetTerr->armyCount = atkCount;
 				targetTerr->player = iPlayer;
+
+				cout << "All defenders have died" << endl;
 			}
 		}
 
@@ -420,7 +456,7 @@ Airlift& Airlift::operator=(const Airlift& airliftToAssign) {
 
 //Negotiate order class-------------------------------------------------------------------
 //constructors
-Negotiate::Negotiate() : Order("Negotiate Order", "Negotiate effect") {
+Negotiate::Negotiate() : Order("Negotiate Order", " A negotiate order targets an enemy player. It results in the target player and the player issuing the order to not be able to successfully attack each others’ territories for the remainder of the turn.") {
 	//empty
 }
 //para const
@@ -442,12 +478,20 @@ Negotiate::~Negotiate() {
 
 //inherited validate, for now just checks if true
 bool Negotiate::validate() {
-	if (iPlayer == targetPlayer || nullptr)
+	if (iPlayer == targetPlayer || nullptr) {
+		cout << "Target to negotiate cannot be yourself or no one." << endl;
 		return false;
-	if (targetPlayer == nullptr)
+	}
+
+	if (targetPlayer == nullptr) {
+		cout << "Target to negotiate cannot be yourself or no one." << endl;
 		return false;
-	if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), targetPlayer) != iPlayer->contractsWith.end())
+	}
+
+	if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), targetPlayer) != iPlayer->contractsWith.end()) {
+		cout << "There is a contract already between the two players!" << endl;
 		return false;
+	}
 
 	else return true;
 
@@ -457,7 +501,9 @@ bool Negotiate::validate() {
 //execute if validate returns true
 void Negotiate::execute() {
 	if (validate()) {
-		cout << this->getEffect() << endl;
+		iPlayer->contractsWith.push_back(targetPlayer);
+		targetPlayer->contractsWith.push_back(iPlayer);
+		cout << "Contract between" << getPlayer()->name << " and " << targetPlayer->name << endl;
 	}
 }
 
