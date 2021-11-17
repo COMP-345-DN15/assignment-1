@@ -23,7 +23,8 @@ class Order {
 public:
 	//constructors
 	Order(); //default
-	Order(string description, string effect, bool valid); //defined
+	Order(string name, string effect);
+	Order(string description, string effect, Player player); //defined
 	Order(const Order& orderToCopy); //copy constructor
 
 	//destructor
@@ -34,6 +35,10 @@ public:
 	//returns effect
 	string getEffect();
 	bool getValid();
+
+	Player* getPlayer(Territory* t) {return t->player;}
+
+	Player* getPlayer() {this->iPlayer;}
 
 	//validate to inherit, virtual for child classes
 	virtual bool validate() = 0;
@@ -81,7 +86,7 @@ class Advance : public Order {
 public:
 	//Constructors
 	Advance(); //default
-	Advance(Player& iPlayer, Territory& sourceTerr, int targetTerr, int numArm); //valid for testing
+	Advance(Player& iPlayer, Territory& sourceTerr, Territory& targetTerr, int numArm); //valid for testing
 	Advance(const Advance& AdvanceToCopy);
 	//Destructor
 	~Advance();
@@ -96,7 +101,7 @@ public:
 	Advance& operator =(const Advance& o);
 
 	Territory* sourceTerr{ nullptr };
-	int targetTerr{ 0 };
+	Territory* targetTerr{ nullptr };
 	int numArm{ 0 };
 
 };
@@ -106,7 +111,7 @@ class Bomb : public Order {
 public:
 	//Constructors
 	Bomb(); //default
-	Bomb(string description, string effect, bool valid); //valid for testing
+	Bomb(Territory& target, Player& player); //valid for testing
 	Bomb(const Bomb& BombToCopy);
 	//Destructor
 	~Bomb();
@@ -119,6 +124,9 @@ public:
 	friend ostream& operator<<(ostream& out, const Bomb& o);
 
 	Bomb& operator =(const Bomb& o);
+
+	Territory* target;
+
 };
 
 //Blockade class
@@ -126,7 +134,7 @@ class Blockade : public Order {
 public:
 	//Constructors
 	Blockade(); //default
-	Blockade(string description, string effect, bool valid); //valid for testing
+	Blockade(Player& player, Territory& target); //valid for testing
 	Blockade(const Blockade& BlockadeToCopy);
 	//Destructor
 	~Blockade();
@@ -139,6 +147,8 @@ public:
 	friend ostream& operator<<(ostream& out, const Blockade& o);
 
 	Blockade& operator =(const Blockade& o);
+	Territory* target;
+
 };
 
 //Airlift class
@@ -146,7 +156,7 @@ class Airlift : public Order {
 public:
 	//Constructors
 	Airlift(); //default
-	Airlift(string description, string effect, bool valid); //valid for testing
+	Airlift(Player& player, Territory& source, Territory& target, int armCount); //valid for testing
 	Airlift(const Airlift& AirliftToCopy);
 	//Destructor
 	~Airlift();
@@ -159,6 +169,10 @@ public:
 	friend ostream& operator<<(ostream& out, const Airlift& o);
 
 	Airlift& operator =(const Airlift& o);
+	
+	Territory* targetTerr;
+	Territory* source;
+	int numArm{0};
 };
 
 //Negotiate class
@@ -166,7 +180,7 @@ class Negotiate : public Order {
 public:
 	//Constructors
 	Negotiate(); //default
-	Negotiate(string description, string effect, bool valid); //valid for testing
+	Negotiate(Player& iPlayer, Player& targetPlayer); //valid for testing
 	Negotiate(const Negotiate& NegotiateToCopy);
 	//Destructor
 	~Negotiate();
@@ -179,6 +193,9 @@ public:
 	friend ostream& operator<<(ostream& out, const Negotiate& o);
 
 	Negotiate& operator =(const Negotiate& o);
+
+	Player* targetPlayer;
+
 };
 
 class OrdersList {

@@ -3,19 +3,27 @@
 //order class---------------------------------------------------------------------------
 
 //default constructor
-Order::Order() : Order("This is an order.", "This is the effect", true) {
+Order::Order() : Order("This is an order.", "This is the effect") {
 	
 	}
 
+Order::Order(string name, string effect) {
+	this->description = new string(name);
+	this->description = new string(effect);
+	this->iPlayer = nullptr;
+
+
+
+}
+
 //para constructor
-Order::Order(string description, string effect, bool valid) : description(new string(description)), effect(new string(effect)), isValid(new bool(valid))  {
+Order::Order(string description, string effect, Player player) : description(new string(description)), effect(new string(effect)), iPlayer(new Player(player))  {
 	
 	}
 //copy constructor
 Order::Order(const Order& orderToCopy) {
 	this->description = new string(*(orderToCopy.description));
 	this->effect = new string(*(orderToCopy.effect));
-	this->isValid = new bool (*(orderToCopy.isValid));
 	this->iPlayer = orderToCopy.iPlayer;
 	}
 
@@ -53,7 +61,7 @@ Order& Order::operator=(const Order& orderToAssign) {
 
 //Deploy order class-------------------------------------------------------------------
 //constructors
-Deploy::Deploy() : Order("Deploy Order", "Deploy Effect", true) {
+Deploy::Deploy() : Order("Deploy Order", "Deploy Effect") {
 	
 
 	//empty
@@ -77,11 +85,9 @@ Deploy::~Deploy() {
 
 //inherited validate, for now just checks if true
 bool Deploy::validate() {
-	vector<Territory*> listOwned = iPlayer->listOfTerritoriesOwned;
-	if (find(listOwned.begin(), listOwned.end(), targetTerr) != listOwned.end() && numArm > 0) {
-		return true;
-	}
-	else return false;
+	if (getPlayer() != getPlayer(targetTerr))
+		return false;
+	else return true;
 
 }
 
@@ -108,14 +114,14 @@ Deploy& Deploy::operator=(const Deploy& deployToAssign) {
 
 //Advance order class-------------------------------------------------------------------
 //constructors
-Advance::Advance() : Order("Advance Order", "Advance effect", true) {
+Advance::Advance() : Order("Advance Order", "Advance effect") {
 	//empty
 }
 //para const
-Advance::Advance(Player& iPlayer, Territory& sourceTerr, int targetTerr, int numArm) {
+Advance::Advance(Player& iPlayer, Territory& sourceTerr, Territory& targetTerr, int numArm) {
 	this->iPlayer = &iPlayer;
 	this->sourceTerr = &sourceTerr;
-	this->targetTerr = targetTerr;
+	this->targetTerr = &targetTerr;
 	this->numArm = numArm;
 
 }
@@ -136,6 +142,9 @@ bool Advance::validate() {
 	vector<int> adjList = sourceTerr->borders;
 
 	if (numArm >= 0) {
+		if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), getPlayer(targetTerr)) != iPlayer->contractsWith.end())
+			return false;
+
 		if (find(listOwned.begin(), listOwned.end(), sourceTerr) != listOwned.end()) {
 			if (find(adjList.begin(), adjList.end(), targetTerr) != adjList.end()) {
 				return true;
@@ -152,16 +161,43 @@ void Advance::execute() {
 	
 
 	if (validate()) {
-		vector<Territory*> listOwned = iPlayer->listOfTerritoriesOwned;
-		vector<int> adjList = sourceTerr->borders;
 
 
 
-		for (auto intIt = listOwned.begin(); intIt != listOwned.end(); intIt++) {
-			if ((*intIt)->territoryID == targetTerr) {
-				Territory* target = *intIt;
-				sourceTerr->armyCount -= numArm;
-				target->armyCount += numArm;
+		//if target unowned
+		if (getPlayer(targetTerr) == nullptr) {
+			targetTerr->armyCount += numArm;
+			targetTerr->player = iPlayer;
+		}
+
+		//if same player
+		if (getPlayer() == getPlayer(targetTerr)) {
+			targetTerr->armyCount += numArm;
+			sourceTerr->armyCount -= numArm;
+			}
+
+		//if different players BATTLE!
+		else {
+			int atkCount = numArm;
+			int defCount = targetTerr->armyCount;
+
+			while (atkCount != 0 && defCount != 0) {
+				int atkRand = rand() % 100 + 1;
+				int defRand = rand() % 100 + 1;
+				
+				if (atkRand <= 60)
+					defCount--;
+
+				if (defRand <= 70)
+					atkCount--;
+			}
+
+			if (atkCount == 0)
+				targetTerr->armyCount = defCount;
+				
+			if (defCount == 0) {
+				targetTerr->armyCount = atkCount;
+				targetTerr->player = iPlayer;
 			}
 		}
 
@@ -184,14 +220,14 @@ Advance& Advance::operator=(const Advance& advanceToAssign) {
 
 //Bomb order class-------------------------------------------------------------------
 //constructors
-Bomb::Bomb() : Order("Bomb Order", "Bomb effect", true) {
+Bomb::Bomb() : Order("Bomb Order", "Bomb effect") {
 	//empty
 }
 //para const
-Bomb::Bomb(string description, string effect, bool valid) {
-	this->description = &description;
-	this->effect = &effect;
-	this->isValid = &valid;
+Bomb::Bomb(Territory& target, Player& player) {
+	this->iPlayer = &player;
+	this->target = &target;
+
 }
 
 //copy constructor
@@ -205,18 +241,28 @@ Bomb::~Bomb() {
 
 //inherited validate, for now just checks if true
 bool Bomb::validate() {
-	if (*this->isValid)
+	vector<Territory*> listOwned = iPlayer->listOfTerritoriesOwned;
+	if (getPlayer(target) == nullptr)
 		return true;
-	else return false;
+
+	if (getPlayer() == getPlayer(target))
+		return false;
+
+	if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), getPlayer(target)) != iPlayer->contractsWith.end())
+		return false;
+
+
+	else return true;
+
 }
 
 //execute if validate returns true
-bool Bomb::execute() {
-	if (this->validate()) {
-		cout << this->getEffect() << endl;
-		return true;
+void Bomb::execute() {
+	if (validate()) {
+		int half = target->armyCount / 2;
+		target->armyCount = half;
+
 	}
-	else return false;
 }
 
 // Overloads the stream insertion operator.
@@ -233,14 +279,15 @@ Bomb& Bomb::operator=(const Bomb& bombToAssign) {
 
 //Blockade order class-------------------------------------------------------------------
 //constructors
-Blockade::Blockade() : Order("Blockade Order", "Blockade effect", true) {
+Blockade::Blockade() : Order("Blockade Order", "Blockade effect") {
 	//empty
 }
 //para const
-Blockade::Blockade(string description, string effect,bool valid) {
-	this->description = &description;
-	this->effect = &effect;
-	this->isValid = &valid;
+Blockade::Blockade(Player& player, Territory& target) {
+	this->iPlayer = &player;
+	this->target = &target;
+
+	
 }
 
 //copy constructor
@@ -255,18 +302,18 @@ Blockade::~Blockade() {
 
 //inherited validate, for now just checks if true
 bool Blockade::validate() {
-	if (*this->isValid)
+	if (getPlayer(target) == iPlayer)
 		return true;
 	else return false;
 }
 
 //execute if validate returns true
-bool Blockade::execute() {
-	if (this->validate()) {
-		cout << this->getEffect() << endl;
-		return true;
+void Blockade::execute() {
+	if (validate()) {
+		int doubleArm = target->armyCount * 2;
+		target->armyCount = doubleArm;
+		target->player = nullptr;
 	}
-	else return false;
 }
 
 // Overloads the stream insertion operator.
@@ -283,14 +330,15 @@ Blockade& Blockade::operator=(const Blockade& blockadeToAssign) {
 
 //Airlift order class-------------------------------------------------------------------
 //constructors
-Airlift::Airlift() : Order("Airlift Order", "Airlift order", true) {
+Airlift::Airlift() : Order("Airlift Order", "Airlift order") {
 	//empty
 }
 //para const
-Airlift::Airlift(string description, string effect, bool valid) {
-	this->description = &description;
-	this->effect = &effect;
-	this->isValid = &valid;
+Airlift::Airlift(Player& player, Territory& source, Territory& targetTerr, int numArm) {
+	this->iPlayer = &player;
+	this->targetTerr = &targetTerr;
+	this->numArm = numArm;
+
 }
 
 //copy constructor
@@ -305,18 +353,57 @@ Airlift::~Airlift() {
 
 //inherited validate, for now just checks if true
 bool Airlift::validate() {
-	if (*this->isValid)
-		return true;
-	else return false;
+	if (iPlayer != (getPlayer(targetTerr)) || iPlayer != (getPlayer(source))) {
+		return false;
+	}
+	if (numArm <= 0)
+		return false;
+
+	if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), getPlayer(targetTerr)) != iPlayer->contractsWith.end())
+		return false;
+	
+	else return true;
 }
 
 //execute if validate returns true
-bool Airlift::execute() {
-	if (this->validate()) {
-		cout << this->getEffect() << endl;
-		return true;
+void Airlift::execute() {
+	if (validate()) {
+
+		//if same player
+		if (getPlayer() == getPlayer(targetTerr)) {
+			targetTerr->armyCount += numArm;
+			source->armyCount -= numArm;
+		}
+
+		//if different players BATTLE!
+		else {
+			int atkCount = numArm;
+			int defCount = targetTerr->armyCount;
+
+			while (atkCount != 0 && defCount != 0) {
+				int atkRand = rand() % 100 + 1;
+				int defRand = rand() % 100 + 1;
+
+				if (atkRand <= 60)
+					defCount--;
+
+				if (defRand <= 70)
+					atkCount--;
+			}
+
+			if (atkCount == 0)
+				targetTerr->armyCount = defCount;
+
+			if (defCount == 0) {
+				targetTerr->armyCount = atkCount;
+				targetTerr->player = iPlayer;
+			}
+		}
+
+
 	}
-	else return false;
+
+	
 }
 
 // Overloads the stream insertion operator.
@@ -333,14 +420,14 @@ Airlift& Airlift::operator=(const Airlift& airliftToAssign) {
 
 //Negotiate order class-------------------------------------------------------------------
 //constructors
-Negotiate::Negotiate() : Order("Negotiate Order", "Negotiate effect", true) {
+Negotiate::Negotiate() : Order("Negotiate Order", "Negotiate effect") {
 	//empty
 }
 //para const
-Negotiate::Negotiate(string description, string effect, bool valid) {
-	this->description = &description;
-	this->effect = &effect;
-	this->isValid = &valid;
+Negotiate::Negotiate(Player& iPlayer, Player& targetPlayer) {
+	this->iPlayer = &iPlayer;
+	this->targetPlayer = &targetPlayer;
+
 }
 
 //copy constructor
@@ -355,18 +442,23 @@ Negotiate::~Negotiate() {
 
 //inherited validate, for now just checks if true
 bool Negotiate::validate() {
-	if (*this->isValid)
-		return true;
-	else return false;
+	if (iPlayer == targetPlayer || nullptr)
+		return false;
+	if (targetPlayer == nullptr)
+		return false;
+	if (find(iPlayer->contractsWith.begin(), iPlayer->contractsWith.end(), targetPlayer) != iPlayer->contractsWith.end())
+		return false;
+
+	else return true;
+
+
 }
 
 //execute if validate returns true
-bool Negotiate::execute() {
-	if (this->validate()) {
+void Negotiate::execute() {
+	if (validate()) {
 		cout << this->getEffect() << endl;
-		return true;
 	}
-	else return false;
 }
 
 // Overloads the stream insertion operator.

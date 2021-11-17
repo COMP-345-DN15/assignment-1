@@ -17,6 +17,8 @@ public:
 	vector<Territory*> listOfTerritoriesOwned;
 	vector<Territory*> listOfTerritoriesToAttack;
 	vector<Territory*> listOfTerritoriesToDefend;
+	vector<Player*> contractsWith;
+
 
 	Player();
 	Player(string pname);
