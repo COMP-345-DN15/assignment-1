@@ -36,8 +36,8 @@ public:
 	string getEffect();
 	bool getValid();
 
+	//inline declarations to return the pointer to the player for comparison purposes
 	Player* getPlayer(Territory* t) {return t->player;}
-
 	Player* getPlayer() {this->iPlayer;}
 
 	//validate to inherit, virtual for child classes
